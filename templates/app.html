@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+{% if user.is_authenticated %}
+<div class="row">
+<div class="col-xs-6 col-md-3">
+ <div id="left-container"><h1>Εφαρμογές</h1>
+ <br/><center><img src="/static/main/img/gadget.png" width="120"/></center><br/>
+ <p style="text-align:justify">Καλωσήλθατε στην βασική οθόνη των <b>Εφαρμογών</b>. Εδώ μπορείτε να εισάγετε στοιχεία σας σχετικά με την έρευνα, ώστε να ολοκληρωθεί ο κύκλος της συλλογής. Οι βασικές εφαρμογές που θα κληθείτε να χρησιμοποιήσετε είναι: <br/>
+ <ul class="nav nav-pills nav-stacked"> 
+ {% for app in apps %}
+	<li>
+	<a onclick=" var source = document.getElementById('iframe');
+				  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.Source_code_host }}?user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.Name }}</a> 
+	</li>
+  {% endfor %}
+<!--<a href="/apps/new/">New Gadget</a>-->
+</ul>
+</div>
+</div>
+<div class="col-xs-6 col-md-6"><br/><br/>
+        
+        <div id='iframe'><div class="app-screen-text">Οθόνη φόρτωσης Εφαρμογών</div></div>
+</div>
+		
+		
+
+<div class="col-xs-6 col-md-3">
+        
+</div>
+
+</div>
+{% else %}
+	<script type="text/javascript">window.location.href='/';</script>
+{% endif %}
+
+</h3>
+
+{% endblock %}
