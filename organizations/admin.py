@@ -3,7 +3,7 @@ from django.contrib import admin
 from organizations.models import (Organization, OrganizationUser,
         OrganizationOwner)
 
-
+'''
 class OwnerInline(admin.StackedInline):
     model = OrganizationOwner
     raw_id_fields = ('organization_user',)
@@ -27,3 +27,4 @@ class OrganizationOwnerAdmin(admin.ModelAdmin):
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(OrganizationUser, OrganizationUserAdmin)
 admin.site.register(OrganizationOwner, OrganizationOwnerAdmin)
+'''

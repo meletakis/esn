@@ -4,6 +4,8 @@ except ImportError:
     from django.conf.urls.defaults import url, patterns
 
 from actstream import feeds
+from actstream import views
+from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = patterns('actstream.views',
@@ -39,10 +41,9 @@ urlpatterns = patterns('actstream.views',
     url(r'^actors/(?P<content_type_id>\d+)/$',
         'model', name='actstream_model'),
         
-    url(r'^new_wall_post/$', 'new_wall_post', name='new_wall_post'),
-    url(r'^detail/(?P<action_id>\d+)/$', 'detail', name='actstream_detail'),
-    url(r'^(?P<username>[-\w]+)/$', 'user', name='actstream_user'),
-    url(r'^$', 'stream', name='actstream'),
-    url(r'^new_wall_post', 'new_wall_post', name='new_wall_post'),
-    url(r'^new_group_post', 'new_group_post', name='new_group_post'),
+    url(r'^new_wall_post/$', view=login_required (views.new_wall_post), name='new_wall_post'),
+    url(r'^detail/(?P<action_id>\d+)/$', view=login_required(views.detail), name='actstream_detail'),
+    url(r'^(?P<username>[-\w]+)/$', view=login_required (views.user), name='actstream_user'),
+    url(r'^$', view=login_required (views.stream), name='actstream'),
+    url(r'^new_group_post', view=login_required (views.new_group_post), name='new_group_post'),
 )

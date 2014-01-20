@@ -37,43 +37,67 @@ $(function() {
   <div class="col-xs-6 col-md-5">
 	<br/>
 	<br/>
-	
-	{% for field in form %}
-	{% if field.label = "Περιγραφή" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+	{% if user.profile.role|stringformat:"s" != "Developer" %} 
+		{% for field in form %}
+			{% if field.label = "Περιγραφή" %}
+			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+			{% if field.label = "Περιοχή" %}
+			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+			{% if field.label = "Ημερομηνία Γέννησης" %}
+			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+			{% if field.label = "Οικογενειακή Κατάσταση" %}
+			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+			{% if field.label = "Δραστηριότητες" %}
+			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+			{% if field.label = "Σπουδές" %}
+			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+		{% endfor %}
+	{% else %} <!-- developer profile -->
+		{% for field in form %}
+				{% if field.label = "Περιγραφή" %}
+				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+				{% if field.label = "Περιοχή" %}
+				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+				{% if field.label = "Ημερομηνία Γέννησης" %}
+				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+				{% if field.label = "Οικογενειακή Κατάσταση" %}
+				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+				{% if field.label = "Δραστηριότητες" %}
+				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+				{% if field.label = "Σπουδές" %}
+				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+		{% endfor %}
 	{% endif %}
-	{% if field.label = "Περιοχή" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-	{% if field.label = "Ημερομηνία Γέννησης" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-	{% if field.label = "Οικογενειακή Κατάσταση" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-	{% if field.label = "Δραστηριότητες" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-	{% if field.label = "Σπουδές" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-{% endfor %}
 	
             
         
 </div>
 <div class="col-xs-6 col-md-4"><br/><br/>
-{% for field in form %}
-	{% if field.label = "Αγαπημένο φαγητό" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-	{% if field.label = "Αγαπημένο άθλημα" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-	{% if field.label = "Ενδιαφέροντα" %}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-	{% endif %}
-{% endfor %}
+{% if user.profile.role|stringformat:"s" != "Developer" %} 
+	{% for field in form %}
+		{% if field.label = "Αγαπημένο φαγητό" %}
+		<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+		{% endif %}
+		{% if field.label = "Αγαπημένο άθλημα" %}
+		<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+		{% endif %}
+		{% if field.label = "Ενδιαφέροντα" %}
+		<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+		{% endif %}
+	{% endfor %}
+{% endif %}
 </div>
 </fieldset></form>
 </div>

@@ -59,6 +59,11 @@ def new_gadget(request):
 
     App_Data_FormSet = formset_factory(DataApplicationForm, max_num=10, formset=RequiredFormSet)
 
+	#check for developer Role
+    if str(request.user.profile.role) != "Developer":
+		return HttpResponseRedirect('/')
+	
+
     if request.method == 'POST': # If the form has been submitted...
         app_form = AppForm(request.POST) # A form bound to the POST data
         # Create a formset from the submitted data
@@ -114,5 +119,8 @@ def new_gadget(request):
     return render_to_response('app/index.html', c)
 
 
-
+def developer(request):
+	if request.user.profile.role == "Developer":
+		return HttpResponseRedirect('/')
+		
 

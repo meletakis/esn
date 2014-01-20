@@ -4,7 +4,8 @@ from django.conf.urls import patterns, url, include
 
 from userprofiles.views import RegistrationView, ProfileUpdateView
 from userprofiles.forms import MyForm
-from userprofiles import views
+from userprofiles import views 
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = patterns('userprofiles.views',
     #url(r'^register/$', 'registration', name='userprofiles_registration'),
@@ -56,10 +57,8 @@ urlpatterns += patterns('django.contrib.auth.views',
     url(r'^password/reset/done/$', 'password_reset_done',
         {'template_name': 'userprofiles/password_reset_done.html'},
         name='auth_password_reset_done'),
-    url(r'^profile/(?P<username>\w+)/$', 
-                       views.profile_view,
-                       name='profile_view'),
-	url(r'^profile/edit/(?P<username>\w+)/$',  ProfileUpdateView.as_view(success_url='.'), name='ProfileUpdate'),
+    url(r'^profile/(?P<username>\w+)/$', view=login_required (views.profile_view),name='profile_view'),
+	url(r'^profile/edit/(?P<username>\w+)/$',  view=login_required (views.user_search), name='ProfileUpdate'),
     url(r'^autocomplete_user/$', views.autocomplete_user, name='autocomplete_user'),
-    url(r'^search/$', views.user_search, name='user_search'),
+    url(r'^search/$', view=login_required (views.user_search), name='user_search'),
 )

@@ -66,7 +66,7 @@ class UserProfile(models.Model):
 	name = models.CharField(verbose_name="Ονοματεπώνυμο",max_length=45L, blank=True)
 	status = models.CharField(verbose_name="Οικογενειακή Κατάσταση",max_length=45L, blank=True)
 	thumbnailURL = models.CharField(verbose_name="Εικόνα",max_length=200L, db_column='thumbnailURL', blank=True, default='/static/main/img/user.png')
-	activities = models.ManyToManyField(Activities)
+	activities = models.ManyToManyField(Activities,blank=True)
 	studies = models.TextField(verbose_name="Σπουδές",blank=True)
 	birthday = models.DateField(verbose_name="Ημερομηνία Γέννησης",null=True, blank=True)
 	favouriteFood = models.TextField(verbose_name="Αγαπημένο φαγητό",blank=True)

@@ -3,8 +3,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
+'''
 from userprofiles.settings import up_settings
-
 
 if up_settings.USE_PROFILE and up_settings.INLINE_PROFILE_ADMIN:
     from userprofiles.utils import UserProfile
@@ -20,3 +20,12 @@ if up_settings.USE_PROFILE and up_settings.INLINE_PROFILE_ADMIN:
         inlines = [UserProfileInline]
 
     admin.site.register(User, UserProfileAdmin)
+'''
+
+from userprofiles.models import UserProfile
+
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'user', 'role', 'displayName', )
+    list_editable = ('user','role','displayName')
+
+admin.site.register(UserProfile, UserProfileAdmin)
