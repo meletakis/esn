@@ -58,7 +58,7 @@ urlpatterns += patterns('django.contrib.auth.views',
         {'template_name': 'userprofiles/password_reset_done.html'},
         name='auth_password_reset_done'),
     url(r'^profile/(?P<username>\w+)/$', view=login_required (views.profile_view),name='profile_view'),
-	url(r'^profile/edit/(?P<username>\w+)/$',  view=login_required (views.user_search), name='ProfileUpdate'),
+	url(r'^profile/edit/(?P<username>\w+)/$',  view=login_required (views.profile_edit), name='ProfileUpdate'),
     url(r'^autocomplete_user/$', views.autocomplete_user, name='autocomplete_user'),
     url(r'^search/$', view=login_required (views.user_search), name='user_search'),
 )

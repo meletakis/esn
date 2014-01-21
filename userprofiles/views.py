@@ -43,6 +43,7 @@ import httplib
 import ast
 import random
 from random import shuffle
+from django.contrib.contenttypes.models import ContentType
 
 def get_all_users(request):
 	user_list = User.objects.all()
@@ -87,38 +88,47 @@ def autocomplete_user(request):
     return HttpResponse(simplejson.dumps(res))
 
 def user_search(request):
-	users = User.objects.all()
 	suggested_users = []
 	random_users = []
 	contacts = []
-	user_relationships = RelationshipStatus.objects.all().filter( to_role_id = request.user.profile.role.id )
-	for status in user_relationships:
-		contacts.extend(request.user.relationships.get_related_to(status=status))
-	users = list(set(users)^set(contacts))
-	for user in users:
-		
-		if not user.is_superuser and user != request.user:
-			random_users.append(user)
-			common_activities = list(set(user.profile.activities.all()).intersection(request.user.profile.activities.all()))
-			if len(common_activities) >= 3:
-				suggested_users.append(user)
-			else:
-				if len(common_activities) == 2:
-					if user.profile.studies == request.user.profile.studies:					
-						suggested_users.append(user)
-					else:
-						if user.profile.status == request.user.profile.status:
-							suggested_users.append(user)
+
+	if str(request.user.profile.role) == "Developer":
+		users = UserProfile.objects.all()
+		for user in users:
+			if str(user.role) == "Developer": #finding developers
+				print "is Developer"
+				if request.user != User.objects.get(id = user.user_id): # remove the request user
+					random_users.append(User.objects.get(id = user.user_id)) # add users to list
+	else:
+		users = User.objects.all()
+		user_relationships = RelationshipStatus.objects.all().filter( to_role_id = request.user.profile.role.id )
+		for status in user_relationships:
+			contacts.extend(request.user.relationships.get_related_to(status=status))
+		users = list(set(users)^set(contacts))
+		for user in users:
+			if not user.is_superuser and user != request.user and str(UserProfile.objects.get(user_id = user.id).role) != "Developer": # user MUST NOT be superuser,same user and developer
+				random_users.append(user)
+				common_activities = list(set(user.profile.activities.all()).intersection(request.user.profile.activities.all()))
+				if len(common_activities) >= 3:
+					suggested_users.append(user)
 				else:
-					if len(common_activities) == 1:
-						if user.profile.status == request.user.profile.status or user.profile.studies == request.user.profile.studies:
+					if len(common_activities) == 2:
+						if user.profile.studies == request.user.profile.studies:					
 							suggested_users.append(user)
+						else:
+							if user.profile.status == request.user.profile.status:
+								suggested_users.append(user)
+					else:
+						if len(common_activities) == 1:
+							if user.profile.status == request.user.profile.status or user.profile.studies == request.user.profile.studies:
+								suggested_users.append(user)
 
 		random.shuffle(random_users)
 		del random_users[20:]
 				
 					
 	return render(request, "userprofiles/search.html", {'users':suggested_users,'random_users':random_users} )
+	
 
 def profile_view(request, username):
 	SEX_CHOICES = (

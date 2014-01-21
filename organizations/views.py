@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.views.generic import (ListView, DetailView, UpdateView, CreateView,
         DeleteView, FormView)
-from userprofiles.models import freeCrop
+from userprofiles.models import freeCrop, UserProfile
 from organizations.models import Organization, OrganizationUser
 from organizations.mixins import (OrganizationMixin, OrganizationUserMixin,
         MembershipRequiredMixin, AdminRequiredMixin, OwnerRequiredMixin)
@@ -18,6 +18,7 @@ from actstream.models import Action
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
+from roleapp.models import Role
 
 
 class BaseOrganizationList(ListView):
@@ -222,11 +223,34 @@ class OrganizationUserDelete(AdminRequiredMixin, BaseOrganizationUserDelete):
     pass
 
 def all_groups(request):
-	all_organizations = Organization.active.all()
-	user_organizations = Organization.active.all().filter(users=request.user)
-	other_organizations =Organization.objects.exclude(pk__in=user_organizations)
-	print all_organizations
-	return render(request, "organizations/organization_list.html", {'all_organizations':all_organizations, 'user_organizations':user_organizations, 'other_organizations':other_organizations, })
+
+    all_organizations = Organization.active.all()
+    user_organizations = Organization.active.all().filter(users=request.user)
+
+    #finding developers
+    users_dev = []
+    developer_role = Role.objects.all().filter(type = "Developer")
+    developers = UserProfile.objects.all().filter( role = developer_role)
+
+    for developer in developers:
+        try:
+            users_dev += User.objects.all().filter(id = developer.user_id)
+        except User.DoesNotExist:
+            print "User does not exist"
+
+    all_developer_organizations =  Organization.active.all().filter(users__in = users_dev).distinct()
+    all_user_organizations = Organization.objects.exclude(pk__in= all_developer_organizations )
+
+
+    if str(request.user.profile.role) == "Developer":
+        all_organizations = all_developer_organizations
+    else:
+        all_organizations = all_user_organizations
+
+    user_organizations = Organization.active.all().filter(users=request.user)
+    other_organizations =all_organizations.exclude(pk__in=user_organizations)
+	#print all_organizations
+    return render(request, "organizations/organization_list.html", {'all_organizations':all_organizations, 'user_organizations':user_organizations, 'other_organizations':other_organizations, })
 	
 
 def user_not_member(request,organization_pk):
