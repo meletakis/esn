@@ -157,7 +157,7 @@ INSTALLED_APPS = (
      'jsonfield',
 )
 
-LOGIN_URL = '/index/'
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -197,4 +197,4 @@ EMAIL_HOST_USER = 'huasecretariat@gmail.com'
 EMAIL_HOST_PASSWORD = 'harokopio'
 ACCOUNT_ACTIVATION_DAYS = 365
 LOGIN_REDIRECT_URL = 'http://83.212.117.41:8000/'
-LOGIN_URL = '/index/'
+LOGIN_URL = '/user/login/'

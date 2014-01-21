@@ -12,44 +12,41 @@ from userprofiles.models import UserProfile
 from django.contrib.contenttypes.models import ContentType
 from responsibilities.models import Responsibility, Assignment
 from roleapp.models import Role
+from django.contrib.auth.models import User
 
 
 
 def index(request):
-	
-    user = UserProfile.objects.get( user_id = request.user.id )
-    role_ct = ContentType.objects.get(app_label="roleapp", model="role")
-    user_ct = ContentType.objects.get(app_label="auth", model="user")
-    #user_role = Role.objects.get (id = user.role_id)
-    #print user_role
-    #print role_ct
-    #print user.role_id
-    try:
-        user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
-        apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
-    except Exception, e:
-        apps = []
-    else:
-        pass
-    finally:
-        pass
+    
+    if str(request.user.profile.role) == "Developer":
+        return render(request, 'app/developer.html',)
+    else: 
+        user = UserProfile.objects.get( user_id = request.user.id )
+        role_ct = ContentType.objects.get(app_label="roleapp", model="role")
+        user_ct = ContentType.objects.get(app_label="auth", model="user")
 
-    try:
-        print "pray"
-        user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
-        print user_assigments
-        apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
-    except Exception, e:
-        pass
-    else:
-        pass
-    finally:
-        pass
-    print apps
-    return render(request, 'app.html', {'apps' : apps })
+        try:
+            user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
+            apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+        except Exception, e:
+            apps = []
+        else:
+            pass
+
+        try:
+            print "pray"
+            user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
+            print user_assigments
+            apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+        except Exception, e:
+            pass
+        else:
+            pass
+
+        return render(request, 'app.html', {'apps' : apps })
 
 
-def new_gadget(request):
+def new_app(request):
 
     class RequiredFormSet(BaseFormSet):
         def __init__(self, *args, **kwargs):
@@ -59,10 +56,10 @@ def new_gadget(request):
 
     App_Data_FormSet = formset_factory(DataApplicationForm, max_num=10, formset=RequiredFormSet)
 
-	#check for developer Role
+    #check for developer Role
     if str(request.user.profile.role) != "Developer":
-		return HttpResponseRedirect('/')
-	
+        return HttpResponseRedirect('/')
+    
 
     if request.method == 'POST': # If the form has been submitted...
         app_form = AppForm(request.POST) # A form bound to the POST data
@@ -71,35 +68,34 @@ def new_gadget(request):
         print "IN POST"
         
         if app_form.is_valid() and app_data_formset.is_valid():
-            app_name = app_form.cleaned_data['Name']
-            email = app_form.cleaned_data['Author_email']
-            source = app_form.cleaned_data['Source_code_host']
+            app_name = app_form.cleaned_data['name']
+            source = app_form.cleaned_data['source_code_host']
             resp = app_form.cleaned_data['responsibility']
-            desc = app_form.cleaned_data['Description']
-            domain = app_form.cleaned_data['Domain']
-            app_obj = App(Name=app_name, Author_email=email, Source_code_host=source, responsibility = resp, Description = desc, Domain = domain)
+            desc = app_form.cleaned_data['description']
+            domain = app_form.cleaned_data['domain']
+            app_obj = App(name=app_name, author=request.user, source_code_host=source, responsibility = resp, description = desc, domain = domain)
             app_obj.save()
             app_obj.Source_code_host = source+'?app_id='+str(app_obj.id)
             app_obj.save()
             
             for form in app_data_formset.forms:
-                data_name = form.cleaned_data['Name']
-                dat_type = form.cleaned_data['Data_Type']
-                domain = form.cleaned_data['Domain']
-                data_obj = Data ( App = app_obj, Name = data_name, Data_Type = dat_type,Domain = domain )
+                data_name = form.cleaned_data['name']
+                dat_type = form.cleaned_data['data_type']
+                domain = form.cleaned_data['domain']
+                data_obj = Data ( app = app_obj, name = data_name, data_type = dat_type, domain = domain )
                 data_obj.save()
 
                 if ( dat_type == "Output"):
-                    ioregistry_obj = IORegistry ( App = app_obj , Data = data_obj, Type = dat_type)
+                    ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = dat_type)
                     print ioregistry_obj
                     ioregistry_obj.save()
                 else:
-                    ioregistry_obj = IORegistry ( App = app_obj , Data = data_obj, Type = "Input")
+                    ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = "Input")
                     print ioregistry_obj
                     ioregistry_obj.save()
 
 
-            return HttpResponseRedirect('/apps/thanks') # Redirect to a 'success' page
+            return HttpResponseRedirect('/apps/') # Redirect to a 'success' page
         else:
             print "FORM VALIDATION ERROR"
             #print app_form.cleaned_data
@@ -116,11 +112,25 @@ def new_gadget(request):
         }
     c.update(csrf(request))
     
-    return render_to_response('app/index.html', c)
+    return render_to_response('app/developer/index.html', c, context_instance=RequestContext(request))
 
 
-def developer(request):
-	if request.user.profile.role == "Developer":
-		return HttpResponseRedirect('/')
-		
+def edit(request):
+
+    if str(request.user.profile.role) != "Developer":
+        return HttpResponseRedirect('/')
+    else:
+        apps = App.objects.filter(author = request.user )
+        return render_to_response('app/developer/edit.html', {'apps' : apps },context_instance=RequestContext(request))
+
+def run(request):
+    if str(request.user.profile.role) != "Developer":
+        return HttpResponseRedirect('/')
+    else:
+        apps = App.objects.filter(author = request.user )
+        return render_to_response('app/developer/run.html', {'apps':apps}, context_instance=RequestContext(request))
+
+
+    
+        
 

@@ -30,7 +30,7 @@
 						<li><a href="/user/profile/{{user.username}}">Προφίλ</a></li>
 						<li><a href="/user/search/">Χρήστες</a></li>
 						<li><a href="/groups/">Ομάδες</a></li>  
-						<li><a href="/apps/developer">Εφαρμογές</a> </li> 
+						<li><a href="/apps/">Εφαρμογές</a> </li> 
 					</ul>
 				{%else%}						
 					<ul class="nav navbar-nav" id="main-nav">
@@ -60,6 +60,7 @@
 			</div><br>
 				
 		{% else %}
+		<div id="not_authenticated"></div>
 		{% endif %}
 		
 	{% endblock %}

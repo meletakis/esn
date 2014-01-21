@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+		<div class="row">
+			<div class="col-xs-6 col-md-3">
+				 <div id="left-container"><h3>Εκτέλεση Εφαρμογών</h3>
+					 <br/><center><img src="/static/main/img/gadget.png" width="120"/></center><br/>
+					 <p style="text-align:justify">Καλωσήλθατε στην βασική οθόνη των <b>Εφαρμογών</b>.
+					 Εδώ μπορείτε να εκτελέσετε τις εφαρμογές που έχετε εισάγει στην πλατφόρμα. <br>
+					 Οι εφαρμογές σας είναι: <br/>
+					 <ul class="nav nav-pills nav-stacked"> 
+						{% if apps %}
+							 {% for app in apps %}
+								<li>
+								<a onclick=" var source = document.getElementById('iframe');
+											  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.source_code_host }}?user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.name }}</a> 
+								</li>
+							  {% endfor %}
+						{% endif %}
+					<!--<a href="/apps/new/">New Gadget</a>-->
+					</ul>
+				</div>
+			</div>
+			<div class="col-xs-6 col-md-6"><br/><br/>
+					<div id='iframe'><div class="app-screen-text">Οθόνη φόρτωσης Εφαρμογών</div>
+			</div>
+		</div>
+
+{% endblock %}

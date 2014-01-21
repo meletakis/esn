@@ -12,13 +12,13 @@ class AppForm (ModelForm):
 	
 	class Meta:
 		model = App
-		fields = ['Name','Author_email','Source_code_host', 'Description','responsibility', 'Domain']
+		fields = ['name','description','domain','source_code_host','responsibility']
 		
 		
 class DataApplicationForm (ModelForm):
 	class Meta:
 		model = Data
-		fields = ['Name','Data_Type', 'Domain']
+		fields = ['name','data_type', 'domain']
 		
 #AppFormset = inlineformset_factory(Gadget, Data, fields=('data_name','input_type'), can_delete=False)		
 		

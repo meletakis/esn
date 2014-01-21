@@ -7,13 +7,12 @@
 <div class="jumbotron" id="jumbo">
   <div class="container">
 
-<img width="180" src="/static/main/img/mw-logo.png" alt="MedWeight Logo"/>
-<h1>Σύνδεση</h1>
+<img width="180" src="/static/main/img/unity.gif" alt="MedWeight Logo"/>
+<h2>Σύνδεση</h2>
 
 {% if user.is_authenticated %}
 Hi, ({{ user.username }}). <a href="{% url 'auth_logout' %}">Αποσύνδεση</a>
 {% else %}
-
 {% include "form.html" %}
     
 

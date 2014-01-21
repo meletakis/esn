@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from responsibilities.models import Responsibility
 from django import forms
 from jsonfield import JSONField
-
+from django.contrib.auth.models import User
 
 try:
     from django.utils import timezone
@@ -36,15 +36,14 @@ class Domain (models.Model):
 class App(models.Model):
     
     id = models.AutoField(primary_key=True)
-    Name = models.CharField(max_length=255, unique= True,blank=False, null= False)
-    Author_email = models.EmailField(max_length=70,blank=False, null= False, unique= False)
+    author = models.ForeignKey(User) 
+    name = models.CharField(max_length=255, unique= True,blank=False, null= False)
     responsibility = models.ForeignKey(Responsibility)
-    Source_code_host = models.URLField(unique= False,blank=False, null= False)
-    Description = models.TextField (  unique= False , blank=False, null= False)
-    responsibility = models.ForeignKey(Responsibility)
-    Domain = models.ForeignKey(Domain,blank=True, null=True)
+    source_code_host = models.URLField(unique= False,blank=False, null= False)
+    description = models.TextField (  unique= False , blank=False, null= False)
+    domain = models.ForeignKey(Domain,blank=True, null=True)
     def __unicode__(self):
-        return self.Name
+        return self.name
     
 class Data(models.Model):
     
@@ -55,20 +54,20 @@ class Data(models.Model):
     ("Output", "Output"), )
         
     id = models.AutoField(primary_key=True)
-    App = models.ForeignKey(App)
-    Name = models.CharField(max_length=100, unique= False,blank=False, null= False)
-    Data_Type = models.CharField(max_length=50, blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
-    Expiration_period = models.IntegerField(null= True, blank=True,)
-    Required = models.BooleanField(default=True)
-    Domain = models.ForeignKey(Domain,blank=True, null=True)
-    Semantics = JSONField()
+    app = models.ForeignKey(App)
+    name = models.CharField(max_length=100, unique= False,blank=False, null= False)
+    data_type = models.CharField(max_length=50, blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
+    expiration_period = models.IntegerField(null= True, blank=True,)
+    required = models.BooleanField(default=True)
+    domain = models.ForeignKey(Domain,blank=True, null=True)
+    semantics = JSONField()
     def __unicode__(self):
-        return self.Name
+        return self.name
 
 class Domain (models.Model):
     id = models.AutoField(primary_key = True)
-    Name = models.CharField(max_length=50, unique= True,blank=False, null= False)
-    Description = models.CharField ( max_length=512, unique= False , blank=False, null= False)
+    name = models.CharField(max_length=50, unique= True,blank=False, null= False)
+    description = models.CharField ( max_length=512, unique= False , blank=False, null= False)
 
 class IORegistry(models.Model):
 
@@ -78,9 +77,9 @@ class IORegistry(models.Model):
     ("Output", "Output"), )
     
     id = models.AutoField(primary_key=True)
-    App = models.ForeignKey(App)
-    Data = models.ForeignKey(Data)
-    Type= models.CharField(max_length=50,blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)     
+    app = models.ForeignKey(App)
+    data = models.ForeignKey(Data)
+    data_type= models.CharField(max_length=50,blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)     
 
     '''
 class Gad_Data(models.Model):
