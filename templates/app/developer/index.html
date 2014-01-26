@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
 
 <script type="text/javascript">
+	
+	Shadowbox.init({
+    skipSetup: true,
+    overlayColor : "#000",
+});
+	
+
 $(document).ready(function() {
   // Code adapted from http://djangosnippets.org/snippets/1389/
 
@@ -50,7 +56,8 @@ $(document).ready(function() {
     // You can only submit a maximum of 10 todo items 
     if (formCount < 10) {
       // Clone a form (without event handlers) from the first form
-      var row = $(".item:first").clone(false).get(0);
+      //var row = $(".item:first").clone(true).prop({ id: "newId", name: "newName"}).get(0);
+      var row = $(".item:first").clone(true)
       // Insert it after the last form
       $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
       
@@ -72,7 +79,10 @@ $(document).ready(function() {
       });
 
       // Update the total form count
-      $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1); 
+      $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
+      console.log(prefix);
+      console.log(formCount);
+      //formCount
 
     } // End if
     else {
@@ -86,59 +96,114 @@ $(document).ready(function() {
     return addForm(this, 'form');
   });
   
-  $("#delete").click(function() {
+  $(".delete").click(function() {
     return deleteForm(this, 'form');
   });
+  
+  $("#id_form-0-data_type").on('change', function() {
+	// alert( this.value );
+	 
+	 if ( this.value == "Profile_Input" )
+	 { 
+		var profile_data = {{profile_data|safe}};
+		var content = "<center> Επιλέξτε ποιο πεδίο του profile επιθυμείτε από την παρακάτω λίστα: <br> <br>";
+		
+		// create pop up window with profile data 
+		for ( var i=0; i< profile_data.length;i++)
+		{
+			var sample = String(profile_data[i]);
+			content += "<h4 onclick='profile_selected_value("+i+")'> "+sample+"</h4> "
+			
+		}
+		content += "</center>";
+		
+		Shadowbox.open({
+        content:    content,
+        player:     "html",
+        title:      "Επιλέξτε δεδομένο",
+        height:     600,
+		width:      800
+		});
+	 }else if ( this.value == "Application_Input" )
+	 { 
+		var app_data = {{app_data|safe}};
+		var content = "<center> Επιλέξτε ποιο παραγόμενο δεδομένο σας ταιριάζει: <br> <br>";
+		alert ( app_data.length );
+		
+		// create pop up window with profile data 
+		for ( var i=0; i< app_data.length;i++)
+		{
+			var sample = app_data[i];
+			alert(sample);
+			content += "<h4 onclick='profile_selected_value("+i+")'> "+sample+"</h4> "
+			
+		}
+		content += "</center>";
+		
+		
+		Shadowbox.open({
+        content:    '<div id="welcome-msg">Welcome to my website!</div>',
+        player:     "html",
+        title:      "Επιλέξτε Δεδομένα"
+		});
+	 }
+	});
 
 
 });
+
+function profile_selected_value(i)
+{
+	var profile_data = {{profile_data|safe}};
+	document.getElementById('id_form-0-name').innerHTML = 'Δεδομένο';
+	document.getElementById('id_form-0-domain').selectedIndex=4;
+	document.getElementById('id_form-0-description').innerHTML = "Το δεδομένο "+profile_data[i]+" από το προφίλ του χρήστη";
+	Shadowbox.close();
+}
 </script>
 
 
 
 
 <div class="row" id="left-content">
-  <div class="col-xs-6 col-md-4" >
+	<div class="col-xs-6 col-md-4" >
 
-  <h1>Δημιουργία εφαρμογής</h1><br>
-  <form action="" method="POST">{% csrf_token %}
+		<h1>Δημιουργία εφαρμογής</h1><br>
+		<form action="" method="POST">{% csrf_token %}
 
-  <table id="table"> 
+		<table id="table"> 
+			{% for field in app_form %}
+				<tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+				<tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
+			{% endfor %}
+		 <tr> <td> </td> <td> <button class="btn btn-success" type="submit">Αποθήκευση </button> </td> </tr>
+		</table>
+		<br>
 
+	</div>
 
-    {% for field in app_form %}
+	<div class="col-xs-6 col-md-5">
+		<h2>Δεδομένα</h2>
+		{{ app_data_formset.management_form }}
+		{% for form in app_data_formset.forms %}
+		<div class ="item" >
+		 <table id="table"> 
 
-        <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
-        <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
-    {% endfor %}
-     <tr> <td> </td> <td> <button class="btn btn-success" type="submit">Αποθήκευση </button> </td> </tr>
-  </table>
-<br>
+			{% for field in form %}
+				 
+				 <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+				 <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
+			{% endfor %}
+		  </table>
+		  <a  class="delete btn btn-danger" href="#">Διαγραφή</a>
 
-</div>
+		</div>
 
-  <div class="col-xs-6 col-md-5">
-    <h2>Δεδομένα</h2>
-    {{ app_data_formset.management_form }}
-    {% for form in app_data_formset.forms %}
-    <div class ="item" >
-     <table id="table"> 
+		{% endfor %}
 
-        {% for field in form %}
-             
-             <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
-             <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
-        {% endfor %}
-      </table>
+		<a class="btn btn-success" id="add" href="#">Προσθήκη Δεδομένου</a>
 
-       <a class="btn btn-danger" id="delete" href="#">Delete</a></p>
-      </div>
-
-    {% endfor %}
-
-    <p><a class="btn btn-success" id="add" href="#">Add another data</a></p>
-
-</form>
-  <div/>
-  <div/>
+		</form>
+	<div/>
+<div/>
 {% endblock %}

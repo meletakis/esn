@@ -10,5 +10,6 @@ urlpatterns = patterns('applications',
     url(r'^new/', view=login_required (views.new_app) ),
     url(r'^edit/', view=login_required (views.edit) ),
     url(r'^run/', view=login_required (views.run) ),
+    url(r'^domain/new/', view=login_required (views.new_domain) ),
     url(r'thanks$', view=login_required (TemplateView.as_view(template_name='app/thanks.html') ), name="thanks"),
 )

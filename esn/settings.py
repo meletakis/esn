@@ -110,6 +110,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -198,3 +199,7 @@ EMAIL_HOST_PASSWORD = 'harokopio'
 ACCOUNT_ACTIVATION_DAYS = 365
 LOGIN_REDIRECT_URL = 'http://83.212.117.41:8000/'
 LOGIN_URL = '/user/login/'
+
+LOCALE_PATHS = (
+    '/home/user/esn/locale', # replace with correct path here
+)

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+
+<div class="row" id="left-content">
+  <div class="col-xs-6 col-md-4" >
+
+  <h1>Δημιουργία domain</h1><br>
+  <form action="" method="POST">{% csrf_token %}
+
+  <table id="table"> 
+
+
+    {% for field in domain_form %}
+
+        <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+        <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
+    {% endfor %}
+     <tr> <td> </td> <td> <button class="btn btn-success" type="submit">Αποθήκευση </button> </td> </tr>
+  </table>
+<br>
+
+</div>
+
+
+
+</form>
+  <div/>
+  <div/>
+{% endblock %}

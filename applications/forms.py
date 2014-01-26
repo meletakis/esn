@@ -2,7 +2,7 @@
 import uuid
 
 from django.forms import ModelForm
-from applications.models import App, Data
+from applications.models import App, Data, Domain
 from django.forms.models import inlineformset_factory
 from django import forms
 
@@ -18,8 +18,11 @@ class AppForm (ModelForm):
 class DataApplicationForm (ModelForm):
 	class Meta:
 		model = Data
-		fields = ['name','data_type', 'domain']
+		fields = ['data_type','name', 'domain','description']
 		
 #AppFormset = inlineformset_factory(Gadget, Data, fields=('data_name','input_type'), can_delete=False)		
 		
-		
+class DomainForm (ModelForm):
+	class Meta:
+		model = Domain
+		fields = ['Name', 'Description']

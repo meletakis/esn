@@ -21,14 +21,15 @@ from applications import settings as app_settings
 from applications.signals import action
 from applications.compat import get_user_model
 from applications.actions import action_handler
+from django.utils.translation import ugettext as _
 
 User = get_user_model()
 
 
 class Domain (models.Model):
     id = models.AutoField(primary_key = True)
-    Name = models.CharField(max_length=50, unique= True,blank=False, null= False)
-    Description = models.CharField ( max_length=512, unique= False , blank=False, null= False)
+    Name = models.CharField( _("Name") ,max_length=50, unique= True,blank=False, null= False, )
+    Description = models.CharField ( _("Description"), max_length=512, unique= False , blank=False, null= False,)
     def __unicode__(self):
         return self.Name
 
@@ -37,37 +38,34 @@ class App(models.Model):
     
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User) 
-    name = models.CharField(max_length=255, unique= True,blank=False, null= False)
-    responsibility = models.ForeignKey(Responsibility)
-    source_code_host = models.URLField(unique= False,blank=False, null= False)
-    description = models.TextField (  unique= False , blank=False, null= False)
-    domain = models.ForeignKey(Domain,blank=True, null=True)
+    name = models.CharField( _("Name"), max_length=255, unique= True,blank=False, null= False)
+    responsibility = models.ForeignKey(Responsibility, verbose_name=_('responsibility'))
+    source_code_host = models.URLField( _("Source Code Host"), unique= False,blank=False, null= False)
+    description = models.TextField ( _("Description"), unique= False , blank=False, null= False)
+    domain = models.ForeignKey(Domain,blank=False, null=False, verbose_name=_('Domain'))
     def __unicode__(self):
         return self.name
     
 class Data(models.Model):
     
     DATA_TYPE_CHOICES = (
-    ("User_Input", "User_Input"),
-    ("Profile_Input", "Profile_Input"),
-    ("Application_Input", "Application_Input"),
-    ("Output", "Output"), )
+    ("User_Input", _("User_Input")),
+    ("Profile_Input", _("Profile_Input")),
+    ("Application_Input", _("Application_Input")),
+    ("Output", _("Output")), )
         
     id = models.AutoField(primary_key=True)
     app = models.ForeignKey(App)
-    name = models.CharField(max_length=100, unique= False,blank=False, null= False)
-    data_type = models.CharField(max_length=50, blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
+    name = models.CharField(_("Name"),max_length=100, unique= False,blank=False, null= False)
+    description = models.TextField ( _("Description"), unique= False , blank=False, null= False)
+    data_type = models.CharField(_("Data Type"),max_length=50, blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
     expiration_period = models.IntegerField(null= True, blank=True,)
     required = models.BooleanField(default=True)
-    domain = models.ForeignKey(Domain,blank=True, null=True)
+    domain = models.ForeignKey(Domain,blank=False, null=False, verbose_name=_('Domain'))
     semantics = JSONField()
     def __unicode__(self):
         return self.name
 
-class Domain (models.Model):
-    id = models.AutoField(primary_key = True)
-    name = models.CharField(max_length=50, unique= True,blank=False, null= False)
-    description = models.CharField ( max_length=512, unique= False , blank=False, null= False)
 
 class IORegistry(models.Model):
 

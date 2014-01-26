@@ -6,13 +6,15 @@ from django.core.urlresolvers import reverse
 from django.forms import ModelForm
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.http import HttpResponse, HttpResponseRedirect
-from applications.forms import AppForm, DataApplicationForm
-from applications.models import App, Data, IORegistry
+from applications.forms import AppForm, DataApplicationForm, DomainForm
+from applications.models import App, Data, IORegistry, Domain
 from userprofiles.models import UserProfile
 from django.contrib.contenttypes.models import ContentType
 from responsibilities.models import Responsibility, Assignment
 from roleapp.models import Role
 from django.contrib.auth.models import User
+from django.utils import simplejson
+from userprofiles.models import UserProfile
 
 
 
@@ -55,6 +57,11 @@ def new_app(request):
                 form.empty_permitted = False
 
     App_Data_FormSet = formset_factory(DataApplicationForm, max_num=10, formset=RequiredFormSet)
+    app_data = Data.objects.all().filter(data_type = "Output").values_list( 'id' ,'name', 'description', 'domain')
+    #profile_data = UserProfile.objects.all().values_list('aboutMe', 'displayName', 'email')
+    profile_data = UserProfile._meta.get_all_field_names()
+    print profile_data
+    print type (profile_data)
 
     #check for developer Role
     if str(request.user.profile.role) != "Developer":
@@ -82,7 +89,8 @@ def new_app(request):
                 data_name = form.cleaned_data['name']
                 dat_type = form.cleaned_data['data_type']
                 domain = form.cleaned_data['domain']
-                data_obj = Data ( app = app_obj, name = data_name, data_type = dat_type, domain = domain )
+                description = form.cleaned_data['description']
+                data_obj = Data ( app = app_obj, name = data_name, data_type = dat_type, domain = domain , description = description)
                 data_obj.save()
 
                 if ( dat_type == "Output"):
@@ -109,6 +117,8 @@ def new_app(request):
     # See http://docs.djangoproject.com/en/dev/ref/contrib/csrf/ 
     c = {'app_form': app_form,
          'app_data_formset': app_data_formset,
+         'app_data' : simplejson.dumps(list(app_data)),
+         'profile_data' : simplejson.dumps(list(profile_data)),
         }
     c.update(csrf(request))
     
@@ -132,5 +142,29 @@ def run(request):
 
 
     
+def new_domain(request):
+    if request.method == 'POST': # If the form has been submitted...
+        domain_form = DomainForm(request.POST) # A form bound to the POST data
         
+        if domain_form.is_valid():
+            domain_name = domain_form.cleaned_data['Name']
+            desc = domain_form.cleaned_data['Description']
+            domain_obj = Domain(Name=domain_name, Description = desc, )
+            domain_obj.save()
+            return HttpResponseRedirect('/apps/') # Redirect to a 'success' page
+        else:
+            print "FORM VALIDATION ERROR"
+            return HttpResponseRedirect('/apps/domain/new')
+
+    else:
+        domain_form = DomainForm()
+    
+    # For CSRF protection
+    # See http://docs.djangoproject.com/en/dev/ref/contrib/csrf/ 
+    c = {'domain_form': domain_form,
+        }
+    c.update(csrf(request))
+    
+    return render_to_response('app/developer/domain.html', c, context_instance=RequestContext(request))
+
 

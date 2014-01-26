@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 13:34+0300\n"
+"POT-Creation-Date: 2014-01-23 13:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,22 +25,22 @@ msgstr ""
 msgid "stopped following"
 msgstr ""
 
-#: actstream/models.py:114
+#: actstream/models.py:115 applications/models.py:162
 #, python-format
 msgid "%(actor)s %(verb)s %(action_object)s on %(target)s %(timesince)s ago"
 msgstr ""
 
-#: actstream/models.py:115
+#: actstream/models.py:116 applications/models.py:163
 #, python-format
 msgid "%(actor)s %(verb)s %(target)s %(timesince)s ago"
 msgstr ""
 
-#: actstream/models.py:117
+#: actstream/models.py:118 applications/models.py:165
 #, python-format
 msgid "%(actor)s %(verb)s %(action_object)s %(timesince)s ago"
 msgstr ""
 
-#: actstream/models.py:118
+#: actstream/models.py:119 applications/models.py:166
 #, python-format
 msgid "%(actor)s %(verb)s %(timesince)s ago"
 msgstr ""
@@ -50,27 +50,23 @@ msgid "English"
 msgstr ""
 
 #: actstream/templates/actstream/action.html:13
-#: templates/actstream/action.html:37
 msgid "ago"
 msgstr ""
 
 #: actstream/templates/actstream/actor.html:25
-#: templates/actstream/actor.html:25
 msgid "UNFOLLOW"
 msgstr ""
 
 #: actstream/templates/actstream/actor.html:26
-#: templates/actstream/actor.html:26
 msgid "FOLLOW"
 msgstr ""
 
 #: actstream/templates/actstream/actor.html:33
-#: templates/actstream/actor.html:33
 msgid "View my actions"
 msgstr ""
 
 #: actstream/templates/actstream/actor.html:39
-#: templates/actstream/actor.html:39
+#: templates/actstream/action.html:33
 msgid "No actions yet"
 msgstr ""
 
@@ -92,17 +88,166 @@ msgstr ""
 msgid "Actors that %(user)s follows"
 msgstr ""
 
-#: embed_video/fields.py:45
-msgid "URL could not be recognized."
+#: applications/models.py:31 applications/models.py:41
+#: applications/models.py:59
+msgid "Name"
+msgstr "Όνομα"
+
+#: applications/models.py:32 applications/models.py:44
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: applications/models.py:42
+msgid "responsibility"
+msgstr "Ανάδοχος"
+
+#: applications/models.py:43
+msgid "Source Code Host"
+msgstr "URL κώδικα"
+
+#: applications/models.py:45 applications/models.py:63
+msgid "Domain"
+msgstr "Κατηγορία"
+
+#: applications/models.py:52
+msgid "User_Input"
+msgstr "Είσοδος από Χρήστη"
+
+#: applications/models.py:53
+msgid "Profile_Input"
+msgstr "Είσοδος απο Profile"
+
+#: applications/models.py:54
+msgid "Application_Input"
+msgstr "Είσοδος από Εφαρμογή"
+
+#: applications/models.py:55
+msgid "Output"
+msgstr "Έξοδος"
+
+#: applications/models.py:60
+msgid "Data Type"
+msgstr "Τύπος Δεδομένου"
+
+#: cicu/models.py:6
+msgid "creation date"
 msgstr ""
 
-#: embed_video/fields.py:47
+#: cicu/models.py:7
+msgid "file"
+msgstr ""
+
+#: cicu/models.py:11
+msgid "uploaded file"
+msgstr ""
+
+#: cicu/models.py:12
+msgid "uploaded files"
+msgstr ""
+
+#: cicu/widgets.py:33
+msgid "<span class='glyphicon glyphicon-camera'></span>"
+msgstr ""
+
+#: cicu/widgets.py:34
+msgid "Αλλαγή εικόνας"
+msgstr ""
+
+#: cicu/widgets.py:35
+msgid "Warning: The area selected is too small.  Min size:"
+msgstr ""
+
+#: cicu/widgets.py:36
+msgid "Image doesn't meet the minimum size requirements "
+msgstr ""
+
+#: cicu/widgets.py:37
+msgid "Ορισμός εικόνας"
+msgstr ""
+
+#: cicu/widgets.py:38
+msgid "Κλείσιμο"
+msgstr ""
+
+#: cicu/widgets.py:39
+msgid "Ανέβασμα εικόνας..."
+msgstr ""
+
+#: cicu/widgets.py:40
+msgid "Επιλέξτε εικόνα από τον υπολογιστή σας."
+msgstr ""
+
+#: organizations/forms.py:56
+msgid "The organization owner must be an admin"
+msgstr ""
+
+#: organizations/forms.py:83
+msgid "This email address has been used multiple times."
+msgstr ""
+
+#: organizations/forms.py:96
+msgid "There is already an organization member with this email address!"
+msgstr ""
+
+#: organizations/forms.py:142
+msgid "The name of the organization"
+msgstr ""
+
+#: organizations/forms.py:144
+msgid "The name in all lowercase, suitable for URL identification"
+msgstr ""
+
+#: organizations/mixins.py:92
+msgid "Sorry, admins only"
+msgstr ""
+
+#: organizations/mixins.py:107
+msgid "You are not the organization owner"
+msgstr ""
+
+#: organizations/models.py:51
+msgid "organization"
+msgstr ""
+
+#: organizations/models.py:52
+msgid "organizations"
+msgstr ""
+
+#: organizations/models.py:128
+msgid "organization user"
+msgstr ""
+
+#: organizations/models.py:129
+msgid "organization users"
+msgstr ""
+
+#: organizations/models.py:145
 msgid ""
-"ID of this video could not "
-"be                                                 recognized."
+"Cannot delete organization owner before organization or transferring "
+"ownership."
 msgstr ""
 
-#: registration/forms.py:34 userprofiles/forms.py:39
+#: organizations/models.py:171
+msgid "organization owner"
+msgstr ""
+
+#: organizations/models.py:172
+msgid "organization owners"
+msgstr ""
+
+#: organizations/views.py:121
+msgid "Already active"
+msgstr ""
+
+#: organizations/backends/defaults.py:42
+msgid "You must define a form_class"
+msgstr ""
+
+#: organizations/backends/defaults.py:61 organizations/backends/defaults.py:63
+msgid "Your URL may have expired."
+msgstr ""
+
+#: registration/forms.py:34 userprofiles/forms.py:85
 msgid "Username"
 msgstr ""
 
@@ -110,12 +255,12 @@ msgstr ""
 msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
 msgstr ""
 
-#: registration/forms.py:36 userprofiles/forms.py:41
+#: registration/forms.py:36 userprofiles/forms.py:87
 #: userprofiles/contrib/profiles/forms.py:12
 msgid "E-mail"
 msgstr ""
 
-#: registration/forms.py:38 userprofiles/forms.py:44
+#: registration/forms.py:38 userprofiles/forms.py:90
 msgid "Password"
 msgstr ""
 
@@ -123,7 +268,7 @@ msgstr ""
 msgid "Password (again)"
 msgstr ""
 
-#: registration/forms.py:50 userprofiles/forms.py:89
+#: registration/forms.py:50 userprofiles/forms.py:135
 msgid "A user with that username already exists."
 msgstr ""
 
@@ -139,7 +284,7 @@ msgstr ""
 msgid "You must agree to the terms to register"
 msgstr ""
 
-#: registration/forms.py:92 userprofiles/forms.py:109
+#: registration/forms.py:92 userprofiles/forms.py:155
 #: userprofiles/contrib/emailverification/forms.py:24
 msgid ""
 "This email address is already in use. Please supply a different email "
@@ -180,112 +325,116 @@ msgstr ""
 msgid "from slug"
 msgstr ""
 
-#: relationships/models.py:36
+#: relationships/models.py:35
 msgid "Denote the relationship from the user, i.e. 'following'"
 msgstr ""
 
-#: relationships/models.py:37
+#: relationships/models.py:36
 msgid "to slug"
 msgstr ""
 
-#: relationships/models.py:38
+#: relationships/models.py:36
 msgid "Denote the relationship to the user, i.e. 'followers'"
 msgstr ""
 
-#: relationships/models.py:40
+#: relationships/models.py:38
 msgid "from role"
 msgstr ""
 
-#: relationships/models.py:41
+#: relationships/models.py:39
 msgid "to role"
 msgstr ""
 
-#: relationships/models.py:45
+#: relationships/models.py:43
 msgid "symmetrical slug"
 msgstr ""
 
-#: relationships/models.py:46
+#: relationships/models.py:44
 msgid "When a mutual relationship exists, i.e. 'friends'"
 msgstr ""
 
-#: relationships/models.py:47
+#: relationships/models.py:45
 msgid "login required"
 msgstr ""
 
-#: relationships/models.py:48
+#: relationships/models.py:46
 msgid "Users must be logged in to see these relationships"
 msgstr ""
 
-#: relationships/models.py:49
+#: relationships/models.py:47
 msgid "private"
 msgstr ""
 
-#: relationships/models.py:50
+#: relationships/models.py:48
 msgid "Only the user who owns these relationships can see them"
 msgstr ""
 
-#: relationships/models.py:56
+#: relationships/models.py:54
 msgid "Relationship status"
 msgstr ""
 
-#: relationships/models.py:57
+#: relationships/models.py:55
 msgid "Relationship statuses"
 msgstr ""
 
-#: relationships/models.py:65
+#: relationships/models.py:63
 msgid "from user"
 msgstr ""
 
-#: relationships/models.py:67
+#: relationships/models.py:65
 msgid "to user"
 msgstr ""
 
-#: relationships/models.py:68
+#: relationships/models.py:66
 msgid "status"
 msgstr ""
 
-#: relationships/models.py:69
+#: relationships/models.py:67
 msgid "created"
 msgstr ""
 
-#: relationships/models.py:70
+#: relationships/models.py:68
 msgid "weight"
 msgstr ""
 
-#: relationships/models.py:72
+#: relationships/models.py:70
 msgid "site"
 msgstr ""
 
-#: relationships/models.py:77
+#: relationships/models.py:75
 msgid "Relationship"
 msgstr ""
 
-#: relationships/models.py:78
+#: relationships/models.py:76
 msgid "Relationships"
 msgstr ""
 
-#: relationships/models.py:81
+#: relationships/models.py:79
 #, python-format
 msgid "Relationship from %(from_user)s to %(to_user)s"
 msgstr ""
 
 #: relationships/templates/relationships/confirm.html:12
-#: templates/relationships/confirm.html:12
+#: templates/relationships/confirm.html:15
 #: templates/relationships_templates/confirm.html:12
 msgid "Επιβεβαίωση"
 msgstr ""
 
 #: relationships/templates/relationships/success.html:5
-#: templates/relationships/success.html:5
 #: templates/relationships_templates/success.html:5
 msgid "Επιτυχία"
 msgstr ""
 
 #: relationships/templates/relationships/success.html:7
-#: templates/relationships/success.html:7
+#: templates/relationships/success.html:16
 #: templates/relationships_templates/success.html:7
 #, python-format
 msgid "%(to_user_username)s"
+msgstr ""
+
+#: templates/actstream/action.html:27 templates/organizations/wall.html:79
+#: templates/userprofiles/wall.html:96
+msgid "πριν"
 msgstr ""
 
 #: templates/notification/email_body.txt:1
@@ -335,6 +484,10 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
+#: templates/relationships/success.html:8
+msgid "Επιτυχία!"
+msgstr ""
+
 #: templates/userprofiles/email_change.html:4
 #: templates/userprofiles/email_change.html:7
 #: templates/userprofiles/email_change.html:15
@@ -362,7 +515,7 @@ msgstr ""
 msgid "Logged out"
 msgstr ""
 
-#: templates/userprofiles/login.html:5 templates/userprofiles/login.html:16
+#: templates/userprofiles/login.html:5 templates/userprofiles/login.html:15
 msgid "Είσοδος"
 msgstr ""
 
@@ -373,12 +526,12 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: templates/userprofiles/login.html:18
+#: templates/userprofiles/login.html:17
 #: templates/userprofiles/registration.html:4
 msgid "Εγγραφή"
 msgstr ""
 
-#: templates/userprofiles/login.html:19
+#: templates/userprofiles/login.html:18
 msgid "Ανάκτηση κωδικού"
 msgstr ""
 
@@ -440,12 +593,12 @@ msgid ""
 "        link to continue resetting your password. Thank you!"
 msgstr ""
 
-#: templates/userprofiles/profile_change.html:3
-#: templates/userprofiles/profile_change.html:6
+#: templates/userprofiles/profile_change.html:4
+#: templates/userprofiles/profile_change.html:19
 msgid "Επεξεργασία προφίλ"
 msgstr ""
 
-#: templates/userprofiles/profile_change.html:14
+#: templates/userprofiles/profile_change.html:34
 msgid "Αποθήκευση"
 msgstr ""
 
@@ -542,39 +695,43 @@ msgid ""
 "Cheers!"
 msgstr ""
 
-#: userprofiles/forms.py:39
+#: userprofiles/forms.py:85
 msgid "This value may contain only letters, numbers and ./-/_ characters."
 msgstr ""
 
-#: userprofiles/forms.py:42
+#: userprofiles/forms.py:88
 msgid "E-mail (repeat)"
 msgstr ""
 
-#: userprofiles/forms.py:45
+#: userprofiles/forms.py:91
 msgid "Password (repeat)"
 msgstr ""
 
-#: userprofiles/forms.py:47 userprofiles/contrib/profiles/forms.py:10
+#: userprofiles/forms.py:93 userprofiles/contrib/profiles/forms.py:10
 msgid "First name"
 msgstr ""
 
-#: userprofiles/forms.py:48 userprofiles/contrib/profiles/forms.py:11
+#: userprofiles/forms.py:94 userprofiles/contrib/profiles/forms.py:11
 msgid "Last name"
 msgstr ""
 
-#: userprofiles/forms.py:117
+#: userprofiles/forms.py:163
 msgid "The two email addresses do not match."
 msgstr ""
 
-#: userprofiles/forms.py:122
+#: userprofiles/forms.py:168
 msgid "You must type the same password each time."
 msgstr ""
 
-#: userprofiles/models.py:38
+#: userprofiles/models.py:49 userprofiles/models.py:50
+msgid "Δραστηριότητες"
+msgstr ""
+
+#: userprofiles/models.py:86
 msgid "User Profile"
 msgstr ""
 
-#: userprofiles/models.py:39
+#: userprofiles/models.py:87
 msgid "User Profiles"
 msgstr ""
 
@@ -673,5 +830,8 @@ msgstr ""
 msgid "Create account"
 msgstr ""
 
-msgid "posted"
-msgstr "δημοσίευσε"
+#~ msgid "Category"
+#~ msgstr "Κατηγορία"
+
+#~ msgid "posted"
+#~ msgstr "δημοσίευσε"
