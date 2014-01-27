@@ -19,6 +19,7 @@ class DataApplicationForm (ModelForm):
 	class Meta:
 		model = Data
 		fields = ['data_type','name', 'domain','description']
+		exclude = ('app',)
 		
 #AppFormset = inlineformset_factory(Gadget, Data, fields=('data_name','input_type'), can_delete=False)		
 		

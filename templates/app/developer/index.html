@@ -44,20 +44,35 @@ $(document).ready(function() {
 
     } // End if
     else {
-        alert("You have to enter at least one todo item!");
+        alert("Θα πρέπει να υπάρχει τουλάχιστον ένα δεδομένο εισόδου ή εξόδου");
     }
     return false;
   }
-
+  
+	function hello() {
+        alert("Hello");
+    }
 
   function addForm(btn, prefix) {
     var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
     // You can only submit a maximum of 10 todo items 
-    if (formCount < 10) {
+    if (formCount < 20) {
       // Clone a form (without event handlers) from the first form
       //var row = $(".item:first").clone(true).prop({ id: "newId", name: "newName"}).get(0);
-      var row = $(".item:first").clone(true)
+      var row = $(".item:first").clone(true).attr('id','item'+formCount);
+      
+      //Set ids to new elements
+      $('#id_form-0-data_type', row).attr( { id: "id_form-"+formCount+"-data_type", name : formCount+"-data_type" } );
+      $('input', row).attr({id: "id_form-"+formCount+"-name" , name : formCount+"-name" });  
+      $('#id_form-0-domain', row).attr({id: "id_form-"+formCount+"-domain" , name : formCount+"-domain" });
+      $('textarea', row).attr({id: "id_form-"+formCount+"-description" , name : formCount+"-description" });
+      
+      //Set null values to new elements
+      $('textarea', row).val('');
+      $('input', row).val('');
+      
+
       // Insert it after the last form
       $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
       
@@ -77,16 +92,19 @@ $(document).ready(function() {
       $(row).find('.delete').click(function() {
         return deleteForm(this, prefix);
       });
+      
+      $(row).on("change", ".id_form-"+formCount+"-data_type" ,function() {
+		  console.log('here');
+        insert_values_to_forms(this.id.match(/\d+/g),this.value);
+      });
 
       // Update the total form count
       $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
-      console.log(prefix);
-      console.log(formCount);
       //formCount
 
     } // End if
     else {
-      alert("Sorry, you can only enter a maximum of ten items.");
+      alert("Μπορείτε να βάλετε συνολικά μέχρι 20 εγγραφές.");
     }
     return false;
   }
@@ -100,21 +118,47 @@ $(document).ready(function() {
     return deleteForm(this, 'form');
   });
   
+  
+  
+  // event handler for dropdown change
   $("#id_form-0-data_type").on('change', function() {
-	// alert( this.value );
-	 
-	 if ( this.value == "Profile_Input" )
-	 { 
-		var profile_data = {{profile_data|safe}};
-		var content = "<center> Επιλέξτε ποιο πεδίο του profile επιθυμείτε από την παρακάτω λίστα: <br> <br>";
+	  
+	  console.log(this.id); // form id (px. id_form-0-input)
+	  console.log(this.value); // form value (px. Application_Input)
+	  console.log ( this.id.match(/\d+/g) );
+	  insert_values_to_forms(this.id.match(/\d+/g),this.value); // send the number value from id_form-0-input (0) to find which form selected user
+	  
+	});
+	
+
+function insert_values_to_forms(id,value)
+{
+	var flag = 0;
+	if ( value == "Profile_Input" )
+	{ 
+		var data = {{profile_data|safe}};
+		var content = "<center> <br> <br> Επιλέξτε ποιο πεδίο του profile επιθυμείτε από την παρακάτω λίστα: <br> <br>";
+		flag = 1;
+
+	}else if ( value == "Application_Input" )
+	{
+		var data = {{app_data|safe}};
+		var content = "<center> <br> <br>Επιλέξτε ποιο παραγόμενο δεδομένο σας ταιριάζει: <br> <br>";
+		flag = 2;
 		
-		// create pop up window with profile data 
-		for ( var i=0; i< profile_data.length;i++)
-		{
-			var sample = String(profile_data[i]);
-			content += "<h4 onclick='profile_selected_value("+i+")'> "+sample+"</h4> "
-			
-		}
+	}else if ( value == "User_Input" || value == "Output" )
+	{
+		selected_values(-1,id,flag);
+	}
+
+	// create pop up window with data 
+	for ( var i=0; i< data.length;i++)
+	{
+		var sample = String(data[i]);
+		if ( value == "Application_Input" )
+			sample = sample.split(",")[1];
+		content += "<h4 onclick='selected_values("+i+","+id+","+flag+")'> "+sample+"</h4> "
+	}
 		content += "</center>";
 		
 		Shadowbox.open({
@@ -124,41 +168,41 @@ $(document).ready(function() {
         height:     600,
 		width:      800
 		});
-	 }else if ( this.value == "Application_Input" )
-	 { 
-		var app_data = {{app_data|safe}};
-		var content = "<center> Επιλέξτε ποιο παραγόμενο δεδομένο σας ταιριάζει: <br> <br>";
-		alert ( app_data.length );
 		
-		// create pop up window with profile data 
-		for ( var i=0; i< app_data.length;i++)
-		{
-			var sample = app_data[i];
-			alert(sample);
-			content += "<h4 onclick='profile_selected_value("+i+")'> "+sample+"</h4> "
-			
-		}
-		content += "</center>";
-		
-		
-		Shadowbox.open({
-        content:    '<div id="welcome-msg">Welcome to my website!</div>',
-        player:     "html",
-        title:      "Επιλέξτε Δεδομένα"
-		});
-	 }
-	});
-
-
+	 
+}// end of function insert_values_to_forms
+	
 });
+	
 
-function profile_selected_value(i)
+
+function selected_values(i,id,flag)
 {
-	var profile_data = {{profile_data|safe}};
-	document.getElementById('id_form-0-name').innerHTML = 'Δεδομένο';
-	document.getElementById('id_form-0-domain').selectedIndex=4;
-	document.getElementById('id_form-0-description').innerHTML = "Το δεδομένο "+profile_data[i]+" από το προφίλ του χρήστη";
-	Shadowbox.close();
+	console.log('in select values '+id+' '+i+' '+flag);
+	if ( flag == 1)
+	{ 
+		var profile_data = {{profile_data|safe}};
+		document.getElementById('id_form-'+id+'-name').value = profile_data[i];
+		document.getElementById('id_form-'+id+'-domain').selectedIndex=4;
+		document.getElementById('id_form-'+id+'-description').value = "Το δεδομένο "+profile_data[i]+" από το προφίλ του χρήστη";
+		Shadowbox.close();
+
+	}else if ( flag == 2)
+	{
+		var profile_data = {{app_data|safe}};
+		document.getElementById('id_form-'+id+'-name').value = String(profile_data[i]).split(",")[1];
+		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i]).split(",")[3];
+		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i]).split(",")[2];
+		Shadowbox.close();
+		
+	}else if ( flag == 0)
+	{
+		document.getElementById('id_form-'+id+'-name').value = '';
+		document.getElementById('id_form-'+id+'-domain').selectedIndex='';
+		document.getElementById('id_form-'+id+'-description').value = "";
+	}
+	
+
 }
 </script>
 
@@ -171,7 +215,7 @@ function profile_selected_value(i)
 		<h1>Δημιουργία εφαρμογής</h1><br>
 		<form action="" method="POST">{% csrf_token %}
 
-		<table id="table"> 
+		<table id="first-table"> 
 			{% for field in app_form %}
 				<tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
 				<tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
@@ -187,15 +231,15 @@ function profile_selected_value(i)
 		{{ app_data_formset.management_form }}
 		{% for form in app_data_formset.forms %}
 		<div class ="item" >
-		 <table id="table"> 
+			 <table id="table"> 
 
-			{% for field in form %}
-				 
-				 <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
-				 <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
-			{% endfor %}
-		  </table>
-		  <a  class="delete btn btn-danger" href="#">Διαγραφή</a>
+				{% for field in form %}
+					 
+					 <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+					 <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
+				{% endfor %}
+			  </table>
+			  <a  class="delete btn btn-danger" href="#">Διαγραφή</a>
 
 		</div>
 
