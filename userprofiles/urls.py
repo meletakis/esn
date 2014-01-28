@@ -12,6 +12,7 @@ urlpatterns = patterns('userprofiles.views',
     url(r'^reg/$', views.extented_view),
     url(r'^all/$', views.get_all_users),
     url(r'^register/$', views.add_user, name='userprofiles_registration'),
+    url(r'^developer/register/$', views.add_developer, name='userprofiles_registration'),
     url(r'^register/complete/$', 'registration_complete',
         name='userprofiles_registration_complete'),
 )

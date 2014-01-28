@@ -27,3 +27,17 @@ class DomainForm (ModelForm):
 	class Meta:
 		model = Domain
 		fields = ['Name', 'Description']
+
+
+class AppForm2 (ModelForm):
+	
+	class Meta:
+		model = App
+		fields = ['name','description','domain','source_code_host','responsibility']
+		
+		
+class DataApplicationForm2 (ModelForm):
+	class Meta:
+		model = Data
+		fields = ['data_type','name', 'domain','description']
+		exclude = ('app',)

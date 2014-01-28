@@ -18,7 +18,9 @@ Hi, ({{ user.username }}). <a href="{% url 'auth_logout' %}">Αποσύνδεσ�
 {% include "form.html" %}
     
 
-    <a href="{% url 'auth_password_reset' %}">Ανάκτηση Κωδικού</a><!-- | <a href="/user/register/">Εγγραφή--></a>
+    <a href="{% url 'auth_password_reset' %}">Ανάκτηση Κωδικού</a><!-- | <a href="/user/register/">Εγγραφή--></a><br>
+    <a href="/user/developer/register">Εγγραφή Προγραμματιστών</a><!-- | <a href="/user/register/">Εγγραφή--></a>
+    
   
 {% endif %}
 

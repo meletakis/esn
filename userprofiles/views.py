@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
@@ -44,6 +45,7 @@ import ast
 import random
 from random import shuffle
 from django.contrib.contenttypes.models import ContentType
+from notifications import notify
 
 def get_all_users(request):
 	user_list = User.objects.all()
@@ -72,6 +74,32 @@ def add_user(request):
     return render(request, "userprofiles/registration.html", {
         'form': form, 
         'user_formset': user_formset,
+        'action' : 'Create'
+    })
+
+
+def add_developer(request):
+    form = UserProfileForm()
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+			#user_profile = form.save()
+			data = form.cleaned_data
+			site = Site.objects.get_current()
+			new_user = RegistrationProfile.objects.create_inactive_user(data['username'] , data['email'],data['password'], site , send_email = False)
+			userprofileobj = UserProfile(user = new_user, role_id=11, displayName = data['username'], thumbnailURL= '/static/main/img/user.png ')
+			userprofileobj.save()
+
+			s_admin = User.objects.get(id = 1)
+			notify.send(new_user, recipient=s_admin, verb='signed_up' )
+
+			return HttpResponseRedirect('/')
+    
+
+
+    return render(request, "userprofiles/registration.html", {
+        'form': form, 
         'action' : 'Create'
     })
 

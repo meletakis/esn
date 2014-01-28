@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row" id="left-content">
+	<h1>Δημιουργία εφαρμογής</h1><br>
+	<form action="" method="POST">{% csrf_token %}
+		<div class="section col-xs-6 col-md-4 left-content" >
+			<table id="first-table"> 
+			{% for field in main_form %}
+				<tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+				<tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
+			{% endfor %}
+			</table>
+		
+		</div>
+
+		<h2>Δεδομένα</h2>
+		{{ formset.management_form }}
+		{% for form in formset.forms %}
+		<div class="item col-xs-6 col-md-5 right-content">
+		  <table id="table"> 
+
+				{% for field in form %}
+					 
+					 <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+					 <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
+				{% endfor %}
+			  </table>
+		   <a  class="delete btn btn-danger" href="#">Διαγραφή</a>
+		</div>
+		{% endfor %}
+		<a class="btn btn-success" id="add" href="#">Προσθήκη Δεδομένου</a>
+
+		<input  class="btn btn-success" type="submit" value = "Αποθήκευση" /> 
+	</form>
+</div>
+</div>
+{% endblock %}

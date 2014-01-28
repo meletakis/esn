@@ -3,7 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <title>Dynamic Forms in Django Example</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript"
+<script type="text/javascript">
 
 
 
@@ -34,6 +34,7 @@ $(document).ready(function () {
                     if ($(this).attr('type') == 'text') updateElementIndex(this, prefix, i);
                 });
             }
+		}
 
         else {
             alert("You have to enter at least one todo item!");
