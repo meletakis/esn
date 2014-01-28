@@ -24,19 +24,19 @@ class Migration(SchemaMigration):
             ('responsibility', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['responsibilities.Responsibility'])),
             ('source_code_host', self.gf('django.db.models.fields.URLField')(max_length=200)),
             ('description', self.gf('django.db.models.fields.TextField')()),
-            ('domain', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.Domain'], null=True, blank=True)),
+            ('domain', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.Domain'])),
         ))
         db.send_create_signal(u'applications', ['App'])
 
         # Adding model 'Data'
         db.create_table(u'applications_data', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('app', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.App'])),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('description', self.gf('django.db.models.fields.TextField')()),
             ('data_type', self.gf('django.db.models.fields.CharField')(default=None, max_length=50)),
             ('expiration_period', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
             ('required', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('domain', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.Domain'], null=True, blank=True)),
+            ('domain', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.Domain'])),
             ('semantics', self.gf('jsonfield.fields.JSONField')()),
         ))
         db.send_create_signal(u'applications', ['Data'])
@@ -47,6 +47,7 @@ class Migration(SchemaMigration):
             ('app', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.App'])),
             ('data', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['applications.Data'])),
             ('data_type', self.gf('django.db.models.fields.CharField')(default=None, max_length=50)),
+            ('idle', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal(u'applications', ['IORegistry'])
 
@@ -120,7 +121,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'App'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'description': ('django.db.models.fields.TextField', [], {}),
-            'domain': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.Domain']", 'null': 'True', 'blank': 'True'}),
+            'domain': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.Domain']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'responsibility': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['responsibilities.Responsibility']"}),
@@ -128,9 +129,9 @@ class Migration(SchemaMigration):
         },
         u'applications.data': {
             'Meta': {'object_name': 'Data'},
-            'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.App']"}),
             'data_type': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '50'}),
-            'domain': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.Domain']", 'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {}),
+            'domain': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.Domain']"}),
             'expiration_period': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -148,7 +149,8 @@ class Migration(SchemaMigration):
             'app': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.App']"}),
             'data': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['applications.Data']"}),
             'data_type': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '50'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'idle': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},

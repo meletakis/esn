@@ -7,7 +7,7 @@ from django.forms import ModelForm
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.http import HttpResponse, HttpResponseRedirect
 from applications.forms import AppForm, DataApplicationForm, DomainForm, DataApplicationForm2, AppForm2
-from applications.models import App, Data, IORegistry, Domain
+from applications.models import App, Data, IORegistry, Domain, IORegistry
 from userprofiles.models import UserProfile
 from django.contrib.contenttypes.models import ContentType
 from responsibilities.models import Responsibility, Assignment
@@ -57,7 +57,8 @@ def new_app(request):
                 form.empty_permitted = False
 
     App_Data_FormSet = formset_factory(DataApplicationForm, max_num=10, formset=RequiredFormSet)
-    app_data = Data.objects.all().filter(data_type = "Output").values_list( 'id' ,'name', 'description', 'domain')
+    app_data = IORegistry.objects.all().filter(data_type = "Output").values_list( 'data')
+    print app_data
     #profile_data = UserProfile.objects.all().values_list('aboutMe', 'displayName', 'email')
     profile_data = UserProfile._meta.get_all_field_names()
     #print profile_data
@@ -177,9 +178,10 @@ def new_app2(request):
                 form.empty_permitted = False
 
     DataApplicationFormSet = formset_factory(DataApplicationForm2, max_num=10, formset=RequiredFormSet)
+
     app_data = Data.objects.all().filter(data_type = "Output").values_list( 'id' ,'name', 'description', 'domain')
-    #profile_data = UserProfile.objects.all().values_list('aboutMe', 'displayName', 'email')
     profile_data = UserProfile._meta.get_all_field_names()
+
     if request.method == 'POST': # If the form has been submitted...
         main_form = AppForm2(request.POST) # A form bound to the POST data
         # Create a formset from the submitted data
@@ -202,15 +204,30 @@ def new_app2(request):
                 dat_type = form.cleaned_data['data_type']
                 domain = form.cleaned_data['domain']
                 description = form.cleaned_data['description']
-                data_obj = Data ( app = app_obj, name = data_name, data_type = dat_type, domain = domain , description = description)
-                data_obj.save()
+
+
+                #counter for data with given data
+                num_results = Data.objects.filter(name = data_name, data_type = dat_type, domain = domain , description = description  ).count()
+
+                # find if data already exist
+
+                if ( num_results == 0): # if data does not exist create it
+                    data_obj = Data ( name = data_name, data_type = dat_type, domain = domain , description = description)
+                    data_obj.save()
+                else:       #if data exist give the value to data_obj
+                    data_obj = Data.objects.get(name = data_name, data_type = dat_type, domain = domain , description = description  )
 
                 if ( dat_type == "Output"):
                     ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = dat_type)
                     print ioregistry_obj
                     ioregistry_obj.save()
                 else:
-                    ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = "Input")
+                    if ( num_results == 0 and dat_type == "Application_Input"):
+                        idle = True
+                    else:
+                        idle = False
+
+                    ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = "Input", idle = idle)
                     print ioregistry_obj
                     ioregistry_obj.save()
 

@@ -53,9 +53,8 @@ class Data(models.Model):
     ("Profile_Input", _("Profile_Input")),
     ("Application_Input", _("Application_Input")),
     ("Output", _("Output")), )
-        
+
     id = models.AutoField(primary_key=True)
-    app = models.ForeignKey(App)
     name = models.CharField(_("Name"),max_length=100, unique= False,blank=False, null= False)
     description = models.TextField ( _("Description"), unique= False , blank=False, null= False)
     data_type = models.CharField(_("Data Type"),max_length=50, blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
@@ -77,7 +76,8 @@ class IORegistry(models.Model):
     id = models.AutoField(primary_key=True)
     app = models.ForeignKey(App)
     data = models.ForeignKey(Data)
-    data_type= models.CharField(max_length=50,blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)     
+    data_type= models.CharField(max_length=50,blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
+    idle = models.BooleanField(default=False)     
 
     '''
 class Gad_Data(models.Model):

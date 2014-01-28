@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row" id="left-content">
+<div  id="left-content">
 	<h1>Δημιουργία εφαρμογής</h1><br>
 	<form action="" method="POST">{% csrf_token %}
-		<div class="section col-xs-6 col-md-4 left-content" >
+		<div class="section" >
 			<table id="first-table"> 
 			{% for field in main_form %}
 				<tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
@@ -17,7 +17,7 @@
 		<h2>Δεδομένα</h2>
 		{{ formset.management_form }}
 		{% for form in formset.forms %}
-		<div class="item col-xs-6 col-md-5 right-content">
+		<div class="item">
 		  <table id="table"> 
 
 				{% for field in form %}
