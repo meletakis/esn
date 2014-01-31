@@ -6,7 +6,7 @@ admin.autodiscover()
 from api import * #RoleTypeResource, UserProfileResource, UserResource, RelationshipStatusResource, RelationshipResource, AppStreamResource, AppDataResource, AppResource, ContentTypeResource
 
 
-rest = Api(api_name='v1')
+rest = Api(api_name='esn')
 rest.register(UserResource())
 rest.register(RoleTypeResource())
 rest.register(UserProfileResource())
@@ -17,7 +17,7 @@ rest.register(AppDataResource())
 rest.register(AppResource())
 rest.register(ContentTypeResource())
 rest.register(ActionStreamResource())
-
+rest.register(NotificationsResource())
 
 #role_resource = RoleTypeResource()
 #user_resource = UserProfileResource()

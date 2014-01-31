@@ -17,6 +17,10 @@
 			έγραψε στον τοίχο σας.
 		{% elif notice.verb == "signed_up" %}
 			<a href="/admin/auth/user/" target="blank" >μόλις έκανε εγγραφή.</a>
+		{% elif notice.verb == "request_responsibility" %}
+			<a href="/admin/responsibilities/" target="blank" >μόλις έκανε αίτηση για νέο Responsibility.</a>
+		{% elif notice.verb == "created_idle_input" %}
+			μόλις δημιούργησε ως έξοδο από μια εφαρμογή του το <p style="color:green">{{notice.description}}.</p>
 		{% elif notice.verb == "Maintainers Followers" %}
 			σας ακολουθεί.
 		{% elif notice.verb == "Maintainers Followers" %}

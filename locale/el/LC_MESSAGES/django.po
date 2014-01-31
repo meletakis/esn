@@ -99,7 +99,7 @@ msgstr "Περιγραφή"
 
 #: applications/models.py:42
 msgid "responsibility"
-msgstr "Ανάδοχος"
+msgstr "Δικαιούχος"
 
 #: applications/models.py:43
 msgid "Source Code Host"
@@ -107,7 +107,7 @@ msgstr "URL κώδικα"
 
 #: applications/models.py:45 applications/models.py:63
 msgid "Domain"
-msgstr "Κατηγορία"
+msgstr "Πεδίο"
 
 #: applications/models.py:52
 msgid "User_Input"

@@ -8,6 +8,7 @@ from roleapp.models import Role
 from userprofiles.models import UserProfile
 from relationships.models import RelationshipStatus, Relationship
 from actstream.models import Action as activities
+from notifications.models import Notification as notifications
 from applications.models import Action as appaction
 from applications.models import App, Data
 from django.contrib.contenttypes.models import ContentType
@@ -18,6 +19,9 @@ class UserResource(ModelResource):
         queryset = User.objects.all()
         resource_name = 'user'
         authorization= Authorization()
+        filtering = {
+		'is_superuser' : ALL,
+		}
 
 
 class RoleTypeResource(ModelResource):
@@ -143,5 +147,24 @@ class ActionStreamResource(ModelResource):
 		queryset = activities.objects.all()
 		resource_name = 'activities'
 		allowed_methods = ['get','post',]
-		authorization= Authorization()         
+		authorization= Authorization()
+
+
+class NotificationsResource(ModelResource):
+
+	# the two above fields can be null
+	action_object_content_type = fields.ToOneField('resources.ContentTypeResource', attribute = 'action_object_content_type', related_name='action_object_content_type', full=True, null=True)
+	target_content_type = fields.ToOneField('resources.ContentTypeResource', attribute = 'target_content_type', related_name='target_content_type', full=True, null=True)
+	actor_content_type = fields.ForeignKey(ContentTypeResource, 'actor_content_type')
+	recipient = fields.ForeignKey(UserResource, 'recipient')
+	#target_content_type = fields.ForeignKey(ContentTypeResource, 'target_content_type')
+	#action_object_content_type = fields.ForeignKey(ContentTypeResource, 'action_object_content_type')
+	
+	class Meta:
+		queryset = notifications.objects.all()
+		resource_name = 'notifications'
+		allowed_methods = ['get','post',]
+		authorization= Authorization() 
+		include_resource_uri = False     
+
 

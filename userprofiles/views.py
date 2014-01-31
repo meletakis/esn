@@ -91,8 +91,9 @@ def add_developer(request):
 			userprofileobj = UserProfile(user = new_user, role_id=11, displayName = data['username'], thumbnailURL= '/static/main/img/user.png ')
 			userprofileobj.save()
 
-			s_admin = User.objects.get(id = 1)
-			notify.send(new_user, recipient=s_admin, verb='signed_up' )
+			s_admins = User.objects.filter(is_superuser = 1)
+			for s_admin in s_admins:
+				notify.send(new_user, recipient=s_admin, verb='signed_up' )
 
 			return HttpResponseRedirect('/')
     
@@ -378,8 +379,8 @@ def profile_edit(request, username):
 	if image_form.is_valid(): # All validation rules pass
 		new_event = image_form.save()
 		a = new_event.id
-		if uploadedImage.objects.get(id=a).image:
-			image_url = "###uploaded_image###"+uploadedImage.objects.get(id=a).image.url+"##!uploaded_image!##"
+		#if uploadedImage.objects.get(id=a).image:
+			#image_url = "###uploaded_image###"+uploadedImage.objects.get(id=a).image.url+"##!uploaded_image!##"
     return render_to_response('userprofiles/profile_change.html', {
         'form': eform, 
 	'image_form': image_form,

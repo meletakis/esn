@@ -12,17 +12,13 @@
 						{% if apps %}
 							 {% for app in apps %}
 								<li>
-								<a onclick=" var source = document.getElementById('iframe');
-											  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.source_code_host }}?user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.name }}</a> 
+								<a href="/apps/edit_app/{{app.id}}"> {{app.name}}</a>
 								</li>
 							  {% endfor %}
 						{% endif %}
 					<!--<a href="/apps/new/">New Gadget</a>-->
 					</ul>
 				</div>
-			</div>
-			<div class="col-xs-6 col-md-6"><br/><br/>
-					<div id='iframe'><div class="app-screen-text">Οθόνη φόρτωσης Εφαρμογών</div>
 			</div>
 		</div>
 

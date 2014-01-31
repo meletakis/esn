@@ -15,6 +15,8 @@ from roleapp.models import Role
 from django.contrib.auth.models import User
 from django.utils import simplejson
 from userprofiles.models import UserProfile
+from django.db.models import Q
+from notifications import notify
 
 
 
@@ -137,8 +139,31 @@ def run(request):
     if str(request.user.profile.role) != "Developer":
         return HttpResponseRedirect('/')
     else:
-        apps = App.objects.filter(author = request.user )
-        return render_to_response('app/developer/run.html', {'apps':apps}, context_instance=RequestContext(request))
+        apps_created= App.objects.filter(author = request.user )
+        
+        user = UserProfile.objects.get( user_id = request.user.id )
+        role_ct = ContentType.objects.get(app_label="roleapp", model="role")
+        user_ct = ContentType.objects.get(app_label="auth", model="user")
+
+        try:
+            user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
+            apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+        except Exception, e:
+            apps = []
+        else:
+            pass
+
+        try:
+            print "pray"
+            user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
+            print user_assigments
+            apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+        except Exception, e:
+            pass
+        else:
+            pass
+        
+        return render_to_response('app/developer/run.html', {'apps_created':apps_created,'apps':apps }, context_instance=RequestContext(request))
 
 
     
@@ -179,10 +204,25 @@ def new_app2(request):
 
     DataApplicationFormSet = formset_factory(DataApplicationForm2, max_num=10, formset=RequiredFormSet)
 
-    app_data = Data.objects.all().filter(data_type = "Output").values_list( 'id' ,'name', 'description', 'domain')
+    distinct_application_outputs_objects = set()
+    distinct_idle_application_inputs_objects = set()
+    all_data = Data.objects.all()
+    for data in all_data:
+        print data
+        if ( IORegistry.objects.all().filter( data_id = data.id , data_type = "Output" ).count() > 0  ): # if exist output data
+            distinct_application_outputs_objects.add(data.id)
+
+        elif ( IORegistry.objects.all().filter( data_id = data.id , idle = True ).count() > 0  ):
+            distinct_idle_application_inputs_objects.add(data.id)
+
+
+    idle_application_inputs = [a.get_json() for a in   Data.objects.filter(pk__in = distinct_idle_application_inputs_objects) ] 
+    application_outputs = [a.get_json() for a  in  Data.objects.filter(pk__in = distinct_application_outputs_objects )] 
+    user_inputs = [a.get_json() for a  in  Data.objects.filter(data_type = "User" )] 
     profile_data = UserProfile._meta.get_all_field_names()
 
-    if request.method == 'POST': # If the form has been submitted...
+
+    if request.method == 'POST': # If form has been submitted...
         main_form = AppForm2(request.POST) # A form bound to the POST data
         # Create a formset from the submitted data
         formset = DataApplicationFormSet(request.POST, request.FILES)
@@ -196,7 +236,7 @@ def new_app2(request):
             domain = main_form.cleaned_data['domain']
             app_obj = App(name=app_name, author=request.user, source_code_host=source, responsibility = resp, description = desc, domain = domain)
             app_obj.save()
-            app_obj.Source_code_host = source+'?app_id='+str(app_obj.id)
+            app_obj.source_code_host = source+'?app_id='+str(app_obj.id)
             app_obj.save()
             
             for form in formset.forms:
@@ -206,22 +246,44 @@ def new_app2(request):
                 description = form.cleaned_data['description']
 
 
+                
+                if ( dat_type == "User_Input"):
+                    dat_type_flag = "User"
+                elif( dat_type == "Profile_Input"):
+                    dat_type_flag = "Profile"
+                else:
+                    dat_type_flag = "App"
+
                 #counter for data with given data
-                num_results = Data.objects.filter(name = data_name, data_type = dat_type, domain = domain , description = description  ).count()
+                num_results = Data.objects.filter(name = data_name, data_type = dat_type_flag, domain = domain , description = description  ).count()
 
                 # find if data already exist
 
                 if ( num_results == 0): # if data does not exist create it
-                    data_obj = Data ( name = data_name, data_type = dat_type, domain = domain , description = description)
+                    data_obj = Data ( name = data_name, data_type = dat_type_flag, domain = domain , description = description)
                     data_obj.save()
                 else:       #if data exist give the value to data_obj
-                    data_obj = Data.objects.get(name = data_name, data_type = dat_type, domain = domain , description = description  )
+                    data_obj = Data.objects.get(name = data_name, data_type = dat_type_flag, domain = domain , description = description  )
 
                 if ( dat_type == "Output"):
                     ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = dat_type)
-                    print ioregistry_obj
+                    # save ioregistry object
                     ioregistry_obj.save()
+
+                    #check if this data exist as idle input
+                    if ( IORegistry.objects.filter(data = data_obj, idle = True  ).count() > 0 ):
+                        # if exist update value as Not idle (because its an output) nad notify user
+                        idle_objects = IORegistry.objects.filter(data = data_obj, idle = True  )
+                        for idle_object in idle_objects:
+                            idle_object.idle = False
+                            idle_object.save()
+                            app = App.objects.get ( id = idle_object.app.id )
+                            print app
+                            notify.send(request.user, recipient=app.author, verb='created_idle_input' , description = data_obj.name)
+
+
                 else:
+                    # if data is Application input and it does not exist idle = true
                     if ( num_results == 0 and dat_type == "Application_Input"):
                         idle = True
                     else:
@@ -241,9 +303,40 @@ def new_app2(request):
     # See http://docs.djangoproject.com/en/dev/ref/contrib/csrf/ 
     c = {'main_form': main_form,
          'formset': formset,
-         'app_data' : simplejson.dumps(list(app_data)),
          'profile_data' : simplejson.dumps(list(profile_data)),
+         'idle_input' : simplejson.dumps(list(idle_application_inputs)),
+         'output' : simplejson.dumps(list(application_outputs)),
+         'user_inputs' : simplejson.dumps(list(user_inputs)),
         }
     c.update(csrf(request))
 
     return render_to_response('app/developer/new.html', c, context_instance=RequestContext(request))
+    
+def edit_specific_app(request,app_id):
+	class RequiredFormSet(BaseFormSet):
+		def __init__(self, *args, **kwargs):
+			super(RequiredFormSet, self).__init__(*args, **kwargs)
+			for form in self.forms:
+				form.empty_permitted = False				
+
+	DataApplicationFormSet = formset_factory(DataApplicationForm2, max_num=10, formset=RequiredFormSet)
+
+
+	print app_id
+	app = get_object_or_404(App, pk=app_id)
+	print app
+
+	form = AppForm2(instance=app)
+	app_data_formset = DataApplicationFormSet(queryset=Data.objects.all())
+
+	c = {'app_form': form,
+	'app_data_formset': app_data_formset,
+
+	}
+	c.update(csrf(request))
+
+	return render_to_response('app/developer/index.html', c, context_instance=RequestContext(request))
+
+
+
+	 
