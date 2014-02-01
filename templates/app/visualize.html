@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script type="text/javascript"> 
+
+$(document).ready(function () {
+	initPageObjects();
+	var apps_info = {{apps_info|safe}};
+	var data = {{data|safe}};
+	console.log (data);
+	var mainCanvas = document.getElementById("mainCanvas");
+	var style_counter = 1;
+	var div_element = ''
+	div_element += "<p class='block draggable block_app' id='Profile_Input' style='left: 0px; top: 0px;' > Είσοδος από το Profile </p> ";
+	div_element += "<p class='block draggable block_app' id='User_Input' style='left: 200px; top: 0px;' > Είσοδος από τον χρήστη </p> ";
+	div_element += "<p class='block draggable block_app_idle' id='Idle_Application_Input' style='left: 400px; top: 0px;' > Idle Application Input </p> ";
+	div_element += '<div class="connector User_Input Profile_Input down_start"> <img class="connector-end" src="/static/js-graph/arrow.gif"> <label class="middle-label">that</label> </div>';
+
+	
+	$('#mainCanvas').html(div_element);
+	console.log (mainCanvas);
+					
+/*
+	for ( var i=0; i< apps_info.length;i++)
+	{
+		console.log (apps_info[i]);
+		console.log (apps_info[i].name);
+		if (i % 5 == 0 )
+			style_counter = 1;
+			
+		mainCanvas.innerHTML += "<p class='block draggable block_app' id='"+apps_info[i].id+"' style='left: "+style_counter*100+"px; top: "+style_counter*100+"px;' > "+apps_info[i].name+" </p> "
+		style_counter++;
+	}
+	
+	
+	for ( var i=0; i< data.length;i++)
+	{
+		
+		mainCanvas.innerHTML += "<div class='connector Profile_Input User_Input '> <img src='/static/js-graph/arrow.gif' class='connector-end'> <label class='middle-label'>"+data[i].name+"</label> </div> "
+
+		console.log ( mainCanvas );
+	}
+	*/
+	
+
+	
+} );
+</script>
+
+
+ <style>
+      .canvas {
+        font-family: tahoma;
+      }
+
+      
+      .block_app {
+        position: absolute;
+        border: 1px solid #7DAB76;
+        background-color: green;
+        padding: 3px;
+      }
+      
+      .block_app_idle {
+        position: absolute;
+        border: 1px solid #7DAB76;
+        background-color: red;
+        padding: 3px;
+      }
+      .connector {
+        background-color: #FF9900;
+      }
+      .source-label, .middle-label, .destination-label {
+        padding: 5px;
+      }
+</style>
+	
+  
+<div class="row" id="left-content">
+  <div class="col-xs-6 col-md-4" >
+
+  <h1>Απεικόνιση εφαρμογών</h1><br>
+
+
+<div class="canvas" id="mainCanvas" style="width: 1500px; height: 700px; border: 1px solid black;">
+</div>
+
+  <div/>
+  <div/>
+{% endblock %}

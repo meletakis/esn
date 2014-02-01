@@ -12,6 +12,7 @@ urlpatterns = patterns('applications',
     url(r'^edit/', view=login_required (views.edit) ),
     url(r'^edit_app/(?P<app_id>\d+)/$', view=login_required (views.edit_specific_app) ),
     url(r'^run/', view=login_required (views.run) ),
+    url(r'^visualize/', view=login_required (views.visualize) ),
     url(r'^domain/new/', view=login_required (views.new_domain) ),
     url(r'thanks$', view=login_required (TemplateView.as_view(template_name='app/thanks.html') ), name="thanks"),
 )

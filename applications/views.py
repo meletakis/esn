@@ -17,7 +17,8 @@ from django.utils import simplejson
 from userprofiles.models import UserProfile
 from django.db.models import Q
 from notifications import notify
-
+import simplejson
+import json
 
 
 def index(request):
@@ -340,3 +341,66 @@ def edit_specific_app(request,app_id):
 
 
 	 
+def visualize(request):
+    
+    if str(request.user.profile.role) == "Developer":
+       apps_info = [a.get_json() for a  in   App.objects.all() ]
+    else: 
+        user = UserProfile.objects.get( user_id = request.user.id )
+        role_ct = ContentType.objects.get(app_label="roleapp", model="role")
+        user_ct = ContentType.objects.get(app_label="auth", model="user")
+
+        # find apps by role assigment responsibility
+        try:
+            user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
+            apps_info = [a.get_json() for a  in App.objects.filter(responsibility_id = user_assigments.Responsibility_id ) ]
+        except Exception, e:
+            apps = []
+        else:
+            pass
+
+        # find apps by user assigment responsibility
+        try:
+            user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
+            print user_assigments
+            apps_info += [a.get_json() for a in App.objects.filter(responsibility_id = user_assigments.Responsibility_id ) ]
+        except Exception, e:
+            pass
+        else:
+            pass
+
+    # set apps_id's to a list from json
+    apps_id = set()
+    for x in range(0, len(apps_info)):
+        apps_id.add(apps_info[x]['id'])
+
+    data_json = []
+    io_objects = IORegistry.objects.filter(app__in = apps_id ) 
+    for  io_object in io_objects:
+        print io_object.id
+
+
+        if (io_object.data_type == "Input" and io_object.idle ): #idle input case
+            data =  Data.objects.get( id = io_object.data_id )
+            app =  App.objects.get(  id = io_object.app_id )
+            data_json += { "from" : "Idle_Application_Input", "to" : app.id, "name" : data.name },
+
+        elif (io_object.data_type == "Input" ):
+
+            if ( Data.objects.filter( data_type = "User", id = io_object.data_id  ).count() ):
+                data =  Data.objects.get(  id = io_object.data_id )
+                app =  App.objects.get(  id = io_object.app_id )
+                data_json += { "from" : "User_Input", "to" : app.id, "name" : data.name },
+            elif ( Data.objects.filter( data_type = "Profile", id = io_object.data_id  ).count() ):
+                data =  Data.objects.get( id = io_object.data_id )
+                app =  App.objects.get(  id = io_object.app_id )
+                data_json += { "from" : "Profile_Input", "to" : app.id, "name" : data.name },
+            elif ( Data.objects.filter( data_type = "Profile", id = io_object.data_id  ).count() ):
+                data =  Data.objects.get( id = io_object.data_id )
+                app =  App.objects.get(  id = io_object.app_id )
+                data_json += { "from" : "Profile_Input", "to" : app.id, "name" : data.name },
+
+
+
+
+    return render(request, 'app/visualize.html', {'apps_info' : simplejson.dumps(list(apps_info)) , 'data' : simplejson.dumps(list(data_json)) })

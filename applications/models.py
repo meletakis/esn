@@ -46,6 +46,14 @@ class App(models.Model):
     domain = models.ForeignKey(Domain,blank=False, null=False, verbose_name=_('Domain'))
     def __unicode__(self):
         return self.name
+
+    def get_json(self):
+        return {
+            'id': self.id, 
+            'name': self.name,
+            'description' : self.description,
+            'domain' : self.domain.id }
+
     
 class Data(models.Model):
     
@@ -75,8 +83,19 @@ class Data(models.Model):
             'description' : self.description,
             'domain' : self.domain.id }
 
-
-
+    def get_json_for_visualization(self):
+        IORegistry_info = IORegistry.objects.get(data_id = self.id)
+        print data_info
+        return {
+            'id': self.id, 
+            'app': self.app.name,
+            'data_id' : self.data.id,
+            'type' : self.data_type, 
+            'idle': self.idle,
+            'name' : data_info.name,
+            'description' : data_info.description,
+            'domain' :  data_info.domain.id,
+            'author' : app_info.author.username, } 
 
 
 class IORegistry(models.Model):
@@ -106,6 +125,21 @@ class IORegistry(models.Model):
             'description' : data_info.description,
             'domain' :  data_info.domain.id,
             'author' : app_info.author.username, }
+
+    def get_json_for_visualization(self):
+        data_info =  Data.objects.get(id = self.data.id)
+        app_info = App.objects.get(id = self.app.id)
+        print data_info
+        return {
+            'id': self.id, 
+            'app': self.app.name,
+            'data_id' : self.data.id,
+            'type' : self.data_type, 
+            'idle': self.idle,
+            'name' : data_info.name,
+            'description' : data_info.description,
+            'domain' :  data_info.domain.id,
+            'author' : app_info.author.username, }            
 
 class Action(models.Model):
     """
