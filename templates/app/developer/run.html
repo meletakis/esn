@@ -7,24 +7,24 @@
 				 <div id="left-container"><h3>Εκτέλεση Εφαρμογών</h3>
 					 <br/><center><img src="/static/main/img/gadget.png" width="120"/></center><br/>
 					 <p style="text-align:justify">Καλωσήλθατε στην βασική οθόνη των <b>Εφαρμογών</b>.
+					 {% if apps %}
 					 Εδώ μπορείτε να εκτελέσετε τις εφαρμογές που ανήκουν στον ρόλο σας. <br>
 					 <ul class="nav nav-pills nav-stacked"> 
-						{% if apps %}
 							 {% for app in apps %}
 								<li>
 								<a onclick=" var source = document.getElementById('iframe');
-											  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.source_code_host }}?user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.name }}</a> 
+											  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.source_code_host }}&user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.name }}</a> 
 								</li>
 							  {% endfor %}
-						{% endif %}
+					{% endif %}
 					
 					<!--<a href="/apps/new/">New Gadget</a>--> <br>
 					</ul>
-					
-					Ακόμα μπορείτε να εκτελέτε τις εφαρμογές που έχετε δημιουργήσει. <br>
-					 Οι εφαρμογές σας είναι: <br/>
-					 <ul class="nav nav-pills nav-stacked"> 
-						{% if apps %}
+					{% if apps_created %}
+						Ακόμα μπορείτε να εκτελέτε τις εφαρμογές που έχετε δημιουργήσει. <br>
+						 Οι εφαρμογές σας είναι: <br/>
+						 <ul class="nav nav-pills nav-stacked"> 
+						
 							 {% for app in apps_created %}
 								<li>
 								<a onclick=" var source = document.getElementById('iframe');

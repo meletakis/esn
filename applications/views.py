@@ -32,7 +32,7 @@ def index(request):
 
         try:
             user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
-            apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+            apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id, is_active = True )
         except Exception, e:
             apps = []
         else:
@@ -42,11 +42,13 @@ def index(request):
             print "pray"
             user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
             print user_assigments
-            apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+            apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id , is_active = True )
         except Exception, e:
             pass
         else:
             pass
+
+        print apps
 
         return render(request, 'app.html', {'apps' : apps })
 
@@ -148,7 +150,7 @@ def run(request):
 
         try:
             user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
-            apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+            apps = App.objects.filter(responsibility_id = user_assigments.Responsibility_id , is_active = True )
         except Exception, e:
             apps = []
         else:
@@ -158,7 +160,7 @@ def run(request):
             print "pray"
             user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
             print user_assigments
-            apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id )
+            apps += App.objects.filter(responsibility_id = user_assigments.Responsibility_id , is_active = True)
         except Exception, e:
             pass
         else:
@@ -239,12 +241,17 @@ def new_app2(request):
             app_obj.save()
             app_obj.source_code_host = source+'?app_id='+str(app_obj.id)
             app_obj.save()
+
+            s_admins = User.objects.filter(is_superuser = 1)
+            for s_admin in s_admins:
+                notify.send(request.user, recipient=s_admin, verb='created_new_app' , description = app_name )
             
             for form in formset.forms:
                 data_name = form.cleaned_data['name']
                 dat_type = form.cleaned_data['data_type']
                 domain = form.cleaned_data['domain']
                 description = form.cleaned_data['description']
+                slug = form.cleaned_data['slug']
 
 
                 
@@ -261,7 +268,7 @@ def new_app2(request):
                 # find if data already exist
 
                 if ( num_results == 0): # if data does not exist create it
-                    data_obj = Data ( name = data_name, data_type = dat_type_flag, domain = domain , description = description)
+                    data_obj = Data ( name = data_name, data_type = dat_type_flag, domain = domain , description = description , slug = slug )
                     data_obj.save()
                 else:       #if data exist give the value to data_obj
                     data_obj = Data.objects.get(name = data_name, data_type = dat_type_flag, domain = domain , description = description  )
@@ -383,22 +390,35 @@ def visualize(request):
         if (io_object.data_type == "Input" and io_object.idle ): #idle input case
             data =  Data.objects.get( id = io_object.data_id )
             app =  App.objects.get(  id = io_object.app_id )
-            data_json += { "from" : "Idle_Application_Input", "to" : app.id, "name" : data.name },
+            data_json += { "from" : "Idle_Application_Input", "to" : app.id, "name" : data.name , "slug" : data.slug },
 
         elif (io_object.data_type == "Input" ):
 
             if ( Data.objects.filter( data_type = "User", id = io_object.data_id  ).count() ):
                 data =  Data.objects.get(  id = io_object.data_id )
                 app =  App.objects.get(  id = io_object.app_id )
-                data_json += { "from" : "User_Input", "to" : app.id, "name" : data.name },
+                data_json += { "from" : "User_Input", "to" : app.id, "name" : data.name , "slug" : data.slug },
             elif ( Data.objects.filter( data_type = "Profile", id = io_object.data_id  ).count() ):
                 data =  Data.objects.get( id = io_object.data_id )
                 app =  App.objects.get(  id = io_object.app_id )
-                data_json += { "from" : "Profile_Input", "to" : app.id, "name" : data.name },
-            elif ( Data.objects.filter( data_type = "Profile", id = io_object.data_id  ).count() ):
+                data_json += { "from" : "Profile_Input", "to" : app.id, "name" : data.name , "slug" : data.slug },
+
+            elif ( Data.objects.filter( data_type = "App", id = io_object.data_id  ).count() ):
+                if ( IORegistry.objects.filter( data_id = io_object.data_id  , data_type = "Output").count() > 0):
+                        data =  Data.objects.get( id = io_object.data_id )
+                        app =  App.objects.get(  id = io_object.app_id )
+                        outputs = IORegistry.objects.filter( data_id = io_object.data_id  , data_type = "Output") 
+
+                        for output in outputs:
+                            output_app =  App.objects.get(  id = output.app_id )
+                            data_json += { "from" : output_app.id, "to" : app.id, "name" : data.name , "slug" : data.slug },
+
+        elif (io_object.data_type == "Output" ):
+
+            if ( IORegistry.objects.filter( data_id = io_object.data_id  , data_type = "Input").count() == 0):
                 data =  Data.objects.get( id = io_object.data_id )
                 app =  App.objects.get(  id = io_object.app_id )
-                data_json += { "from" : "Profile_Input", "to" : app.id, "name" : data.name },
+                data_json += { "from" : app.id , "to" : "Idle_Application_Output", "name" : data.name , "slug" : data.slug },             
 
 
 

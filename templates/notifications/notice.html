@@ -20,7 +20,13 @@
 		{% elif notice.verb == "request_responsibility" %}
 			<a href="/admin/responsibilities/" target="blank" >μόλις έκανε αίτηση για νέο Responsibility.</a>
 		{% elif notice.verb == "created_idle_input" %}
-			μόλις δημιούργησε ως έξοδο από μια εφαρμογή του το <p style="color:green">{{notice.description}}.</p>
+			 δημιούργησε ως έξοδο από μια εφαρμογή του το <p style="color:green">{{notice.description}}.</p>
+		{% elif notice.verb == "responsibility_accepted" %}
+			έκανε δεκτό το αίτημα σας για το responsibility <i>{{notice.description}} <i>.>
+		{% elif notice.verb == "responsibility_rejected" %}
+			απέριψε το αίτημα σας για το responsibility <i>{{notice.description}}<i>.
+		{% elif notice.verb == "created_new_app" %}
+			δημιούργησε την εφαρμογή <a href="/admin/applications/app/" target="blank" >{{notice.description}}</a>.
 		{% elif notice.verb == "Maintainers Followers" %}
 			σας ακολουθεί.
 		{% elif notice.verb == "Maintainers Followers" %}

@@ -39,5 +39,5 @@ class AppForm2 (ModelForm):
 class DataApplicationForm2 (ModelForm):
 	class Meta:
 		model = Data
-		fields = ['data_type','name', 'domain','description']
+		fields = ['data_type','name', 'domain','description','slug']
 		exclude = ('app',)

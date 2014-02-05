@@ -44,6 +44,7 @@ class App(models.Model):
     source_code_host = models.URLField( _("Source Code Host"), unique= False,blank=False, null= False)
     description = models.TextField ( _("Description"), unique= False , blank=False, null= False)
     domain = models.ForeignKey(Domain,blank=False, null=False, verbose_name=_('Domain'))
+    is_active = models.BooleanField(_('active'), default=False, )
     def __unicode__(self):
         return self.name
 
@@ -52,7 +53,9 @@ class App(models.Model):
             'id': self.id, 
             'name': self.name,
             'description' : self.description,
-            'domain' : self.domain.id }
+            'domain' : self.domain.id,
+            'responsibility' : self.responsibility.Name,
+            'active' : self.is_active  }
 
     
 class Data(models.Model):
@@ -65,6 +68,7 @@ class Data(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(_("Name"),max_length=100, unique= False,blank=False, null= False)
+    slug =models.SlugField(_("Slug") ,max_length=100, unique=False, blank=False, null= False )
     description = models.TextField ( _("Description"), unique= False , blank=False, null= False)
     data_type = models.CharField(_("Data Type"),max_length=50, blank=False, null= False, choices=DATA_TYPE_CHOICES,default= None)
     expiration_period = models.IntegerField(null= True, blank=True,)
@@ -81,7 +85,8 @@ class Data(models.Model):
             'id': self.id, 
             'name': self.name,
             'description' : self.description,
-            'domain' : self.domain.id }
+            'domain' : self.domain.id ,
+            'slug' : self.slug }
 
     def get_json_for_visualization(self):
         IORegistry_info = IORegistry.objects.get(data_id = self.id)

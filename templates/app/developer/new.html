@@ -89,6 +89,8 @@ $(document).ready(function () {
 			
 			document.getElementById('id_form-'+formCount+'-name').readOnly=false;
 			document.getElementById('id_form-'+formCount+'-description').readOnly=false;
+			document.getElementById('id_form-'+formCount+'-slug').readOnly=false;
+			
 			
 			$(row).find( "#id_form-"+formCount+"-domain option" ).prop('disabled',false);
 			//$( "#id_form-"+id+"-domain option").prop('disabled',false);
@@ -128,6 +130,7 @@ $(document).ready(function () {
 			if (myInput && myInput.value) {
 			 document.getElementById('id_form-'+i+'-name').readOnly=true;
 			 document.getElementById('id_form-'+i+'-description').readOnly=true;
+			 document.getElementById('id_form-'+formCount+'-slug').readOnly=true;
 			 $( "#id_form-"+i+"-domain option:not(:selected)" ).prop('disabled',true);
 			}
 			
@@ -245,6 +248,9 @@ function selected_values(i,id,flag)
 		
 		document.getElementById('id_form-'+id+'-description').value = "Το δεδομένο "+profile_data[i]+" από το προφίλ του χρήστη";
 		document.getElementById('id_form-'+id+'-description').readOnly=true;
+		
+		document.getElementById('id_form-'+id+'-slug').value = profile_data[i];
+		document.getElementById('id_form-'+id+'-slug').readOnly=true;
 		$(function () {
 			$("#overlay").hide();
 		});
@@ -252,6 +258,7 @@ function selected_values(i,id,flag)
 	}else if ( flag == 2) // Output
 	{
 		var profile_data = {{output|safe}};
+		console.log(  profile_data );
 		document.getElementById('id_form-'+id+'-name').value = String(profile_data[i].name);
 		document.getElementById('id_form-'+id+'-name').readOnly=true;
 		
@@ -260,6 +267,9 @@ function selected_values(i,id,flag)
 		
 		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i].description);
 		document.getElementById('id_form-'+id+'-description').readOnly=true;
+		
+		document.getElementById('id_form-'+id+'-slug').value = String(profile_data[i].slug);
+		document.getElementById('id_form-'+id+'-slug').readOnly=true;		
 		$(function () {
 			$("#overlay").hide();
 		});
@@ -276,6 +286,9 @@ function selected_values(i,id,flag)
 		
 		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i].description);
 		document.getElementById('id_form-'+id+'-description').readOnly=true;
+		
+		document.getElementById('id_form-'+id+'-slug').value = String(profile_data[i].slug);
+		document.getElementById('id_form-'+id+'-slug').readOnly=true;			
 		$(function () {
 			$("#overlay").hide();
 		});
@@ -292,7 +305,12 @@ function selected_values(i,id,flag)
 		
 		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i].description);
 		document.getElementById('id_form-'+id+'-description').readOnly=true;
-		Shadowbox.close();
+		
+		document.getElementById('id_form-'+id+'-slug').value = String(profile_data[i].slug);
+		document.getElementById('id_form-'+id+'-slug').readOnly=true;			
+		$(function () {
+			$("#overlay").hide();
+		});
 		
 	} 
 	else if ( flag == 0) // User
@@ -305,6 +323,9 @@ function selected_values(i,id,flag)
 		
 		document.getElementById('id_form-'+id+'-description').value = "";
 		document.getElementById('id_form-'+id+'-description').readOnly=false;
+		
+		document.getElementById('id_form-'+id+'-slug').value = "";
+		document.getElementById('id_form-'+id+'-slug').readOnly=false;
 		
 		$(function () {
 			$("#overlay").hide();

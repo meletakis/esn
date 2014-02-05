@@ -4,43 +4,93 @@
 <script type="text/javascript"> 
 
 $(document).ready(function () {
-	initPageObjects();
+
 	var apps_info = {{apps_info|safe}};
 	var data = {{data|safe}};
 	console.log (data);
 	var mainCanvas = document.getElementById("mainCanvas");
-	var style_counter = 1;
-	var div_element = ''
-	div_element += "<p class='block draggable block_app' id='Profile_Input' style='left: 0px; top: 0px;' > Είσοδος από το Profile </p> ";
-	div_element += "<p class='block draggable block_app' id='User_Input' style='left: 200px; top: 0px;' > Είσοδος από τον χρήστη </p> ";
-	div_element += "<p class='block draggable block_app_idle' id='Idle_Application_Input' style='left: 400px; top: 0px;' > Idle Application Input </p> ";
-	div_element += '<div class="connector User_Input Profile_Input down_start"> <img class="connector-end" src="/static/js-graph/arrow.gif"> <label class="middle-label">that</label> </div>';
-
+	var style_counter_x = 0;
+	var style_counter_y = 1;
 	
-	$('#mainCanvas').html(div_element);
-	console.log (mainCanvas);
-					
-/*
+
 	for ( var i=0; i< apps_info.length;i++)
 	{
-		console.log (apps_info[i]);
-		console.log (apps_info[i].name);
-		if (i % 5 == 0 )
-			style_counter = 1;
-			
-		mainCanvas.innerHTML += "<p class='block draggable block_app' id='"+apps_info[i].id+"' style='left: "+style_counter*100+"px; top: "+style_counter*100+"px;' > "+apps_info[i].name+" </p> "
-		style_counter++;
+		if (style_counter_x % 4 == 0 )
+		{
+			style_counter_x = 0;
+			style_counter_y++;
+		}
+		if ( apps_info[i].active )
+				mainCanvas.innerHTML += "<p class='block draggable block_app' id='"+apps_info[i].id+"' style='left: "+style_counter_x*300+"px; top: "+style_counter_y*100+"px;' > "+apps_info[i].name+" <br> ("+apps_info[i].responsibility+") </p> "
+		else
+			mainCanvas.innerHTML += "<p class='block draggable block_app_idle' id='"+apps_info[i].id+"' style='left: "+style_counter_x*300+"px; top: "+style_counter_y*100+"px;' > "+apps_info[i].name+" <br> ("+apps_info[i].responsibility+") </p> "
+		style_counter_x++;
 	}
 	
-	
+    style_counter_x = 0;
+    style_counter_y++;
 	for ( var i=0; i< data.length;i++)
 	{
-		
-		mainCanvas.innerHTML += "<div class='connector Profile_Input User_Input '> <img src='/static/js-graph/arrow.gif' class='connector-end'> <label class='middle-label'>"+data[i].name+"</label> </div> "
+		if ( data[i].from == "Idle_Application_Input" )
+		{
+			mainCanvas.innerHTML += "<p class='block draggable block_idle_app_input' id='Idle_Application_Input"+i+"' style='left: "+style_counter_x*300+"px; top: "+style_counter_y*100+"px;' > Idle Application Input </p> ";
+			if (style_counter_x % 4 == 0 )
+			{
+				style_counter_x = 0;
+				style_counter_y++;
+			}
+			style_counter_x++;
+			mainCanvas.innerHTML += "<div class='connector Idle_Application_Input"+i+" "+data[i].to+" '> <img src='/static/js-graph/arrow.gif' class='connector-end'> <label class='middle-label'> "+data[i].name+" ("+data[i].slug+" ) </label>	 </div> "
+		}
+		else if ( data[i].from == "Profile_Input" )
+		{
+			mainCanvas.innerHTML += "<p class='block draggable block_profile_input' id='Profile_Input"+i+"' style='left: "+style_counter_x*300+"px; top: "+style_counter_y*100+"px;' > Profile Input </p> ";
+			if (style_counter_x % 4 == 0 )
+			{
+				style_counter_x = 0;
+				style_counter_y++;
+			}
+			style_counter_x++;
+			mainCanvas.innerHTML += "<div class='connector Profile_Input"+i+" "+data[i].to+" '> <img src='/static/js-graph/arrow.gif' class='connector-end'> <label class='middle-label'> "+data[i].name+" ("+data[i].slug+" ) </label>	 </div> "
+		}
+		else if ( data[i].from == "User_Input" )
+		{
+			mainCanvas.innerHTML += "<p class='block draggable block_user_input' id='User_Input"+i+"' style='left: "+style_counter_x*300+"px; top: "+style_counter_y*100+"px;' > User Input </p> ";
+			if (style_counter_x % 4 == 0 )
+			{
+				style_counter_x = 0;
+				style_counter_y++;
+			}
+			style_counter_x++;
+			mainCanvas.innerHTML += "<div class='connector User_Input"+i+" "+data[i].to+" '> <img src='/static/js-graph/arrow.gif' class='connector-end'> <label class='middle-label'> "+data[i].name+" ("+data[i].slug+" ) </label>	 </div> "
+		}
+		else if ( data[i].to == "Idle_Application_Output" )
+		{
+			mainCanvas.innerHTML += "<p class='block draggable block_idle_app_output' id='Idle_Application_Output"+i+"' style='left: "+style_counter_x*300+"px; top: "+style_counter_y*100+"px;' > Idle Application Output </p> ";
+			if (style_counter_x % 4 == 0 )
+			{
+				style_counter_x = 0;
+				style_counter_y++;
+			}
+			style_counter_x++;
+			mainCanvas.innerHTML += "<div class='connector Idle_Application_Output"+i+" "+data[i].from+" '> <img src='/static/js-graph/arrow.gif' class='connector-start'> <label class='middle-label'> "+data[i].name+" ("+data[i].slug+" ) </label>	 </div> "
+		}
+		else
+		{	
+			mainCanvas.innerHTML += "<div class='connector "+data[i].from+" "+data[i].to+" '> <img src='/static/js-graph/arrow.gif' class='connector-end'> <label class='middle-label'> "+data[i].name+"  ("+data[i].slug+" ) </label> </div> "
+		}
 
-		console.log ( mainCanvas );
+		
 	}
-	*/
+	
+	mainCanvas.style.height= (style_counter_y*130 )+"px";
+	mainCanvas.style.width="100%";
+	mainCanvas.style.position="fixed";
+	mainCanvas.style.border="1px solid black";
+
+	initPageObjects();
+	console.log (mainCanvas);
+	
 	
 
 	
@@ -61,14 +111,55 @@ $(document).ready(function () {
         padding: 3px;
       }
       
-      .block_app_idle {
+     .block_app_idle{
         position: absolute;
         border: 1px solid #7DAB76;
+        background-color: orange;
+        padding: 3px;
+      }
+      
+      .block_idle_app_input {
+        position: absolute;
+        border: 1px solid #7DAB76;
+        border-radius: 50%;
+        width: 80px;
+		height: 80px;
         background-color: red;
+        padding: 3px;
+      }
+      
+      .block_idle_app_output{
+        position: absolute;
+        border: 1px solid #7DAB76;
+        border-radius: 50%;
+        width: 80px;
+		height: 80px;
+        background-color: grey;
+        padding: 3px;
+      }
+      
+      .block_user_input {
+        position: absolute;
+        border: 1px solid #7DAB76;
+        border-radius: 50%;
+        width: 60px;
+		height: 60px;
+        background-color: yellow;
+        padding: 3px;
+      }
+      
+      .block_profile_input {
+        position: absolute;
+        border: 1px solid #7DAB76;
+        border-radius: 50%;
+        width: 50%;
+		height: 50%;
+        background-color: blue;
         padding: 3px;
       }
       .connector {
         background-color: #FF9900;
+        padding: 2px;
       }
       .source-label, .middle-label, .destination-label {
         padding: 5px;
@@ -76,15 +167,11 @@ $(document).ready(function () {
 </style>
 	
   
-<div class="row" id="left-content">
-  <div class="col-xs-6 col-md-4" >
+<center>
+  <h1>Γραφική Απεικόνιση εφαρμογών</h1><br>
 
-  <h1>Απεικόνιση εφαρμογών</h1><br>
-
-
-<div class="canvas" id="mainCanvas" style="width: 1500px; height: 700px; border: 1px solid black;">
+  
+<div class="canvas" id="mainCanvas" >
 </div>
-
-  <div/>
-  <div/>
+</center>
 {% endblock %}

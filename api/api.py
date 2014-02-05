@@ -134,7 +134,7 @@ class AppStreamResource(ModelResource):
 		}		
 		queryset = appaction.objects.all()
 		resource_name = 'app_activities'
-		allowed_methods = ['get','post',]
+		allowed_methods = ['get','post','put','patch']
 		authorization= Authorization()
 		include_resource_uri = False		
 		

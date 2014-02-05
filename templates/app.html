@@ -12,7 +12,7 @@
  {% for app in apps %}
 	<li>
 	<a onclick=" var source = document.getElementById('iframe');
-				  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.Source_code_host }}?user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.Name }}</a> 
+				  source.innerHTML = '<iframe id=\'gadget-frame\' src=  {{ app.Source_code_host }}&user_id={{ user.get_profile.id }}></iframe>';"  href="#"><span class="glyphicon glyphicon-chevron-right"></span> {{ app.name }}</a> 
 	</li>
   {% endfor %}
 <!--<a href="/apps/new/">New Gadget</a>-->
