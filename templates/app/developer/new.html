@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block content %}
 
 
 	<style>
 		#overlay {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(245, 245, 225, 0.8);
     z-index: 999;
     position: fixed;
     left: 0;
@@ -13,14 +14,50 @@
     height: 100%;
     display: none;
     text-align: center;
+    padding: 70px;
 }
 	</style>
+	<style type="text/css">
+      .list-group-heading-icon {
+        float: right;
+        margin-right: 20px;
+      }
+      .popover {
+        min-width: 220px;
+        min-height: 100px;
+      }
+      .col-1-head {
+        background-color: #2C3E50 !important;
+        border-color: #2C3E50 !important;
+      }
+      .col-2-head {
+        background-color: #E74C3C !important;
+        border-color: #E74C3C !important;
+      }
+      .col-3-head {
+        background-color: #3498DB !important;
+        border-color: #3498DB !important;
+      }
+    </style>
 	<script type="text/javascript">
 		
-			Shadowbox.init({
+		
+		
+Shadowbox.init({
     skipSetup: true,
     overlayColor : "#000",
 });
+
+$(document).ready(function(){
+    $(document).bind('keydown', function(e) { 
+        if (e.which == 27) {
+            alert('esc pressed');
+            selected_values(i,id,0);
+        }
+    }); 
+});
+
+
 
 $(document).ready(function () {
     // Code adapted from http://djangosnippets.org/snippets/1389/  
@@ -161,16 +198,18 @@ function insert_values_to_forms(id,value)
 	{ 
 		flag = 1;
 		var data = {{profile_data|safe}};
+		console.log (data);
 		var sample = String(data[i]);
-		var content = "<center> <br> <br> <br> <br> <h3> Επιλέξτε ποιο πεδίο του profile επιθυμείτε από την παρακάτω λίστα: </h3> <br> <br>";
+		var content = '<div class="container">  <div class="row"> <div class="col-md-4"> </div> <div class="col-md-4"> <div class="list-group">';
+		content += '<a href="#" class="list-group-item active col-1-head"> <h3> Profile Data <span class="glyphicon list-group-heading-icon"></h3></a> ';
 		for ( var i=0; i< data.length;i++)
 		{
 			var sample = String(data[i]);
 			if ( value == "Application_Input" || value == "Output"  )
 				sample = sample.split(",")[1];
-			content += "<h4 onclick='selected_values("+i+","+id+","+flag+")'> "+sample+"</h4> "
+			content += '<a href="#" ondblclick="selected_values('+i+','+id+','+flag+')" class="list-group-item" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover"  data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." data-title="'+sample+'"> '+sample+'</a>';
 		}
-		content += "<br><h4 onclick='selected_values("+i+","+id+",0)'> Αν δεν βρήκατε το δεδομένο που ψάχνετε πατήστε εδώ και εισάγετε τιμές στα πεδία</h4><br> <br></center>";
+		content += "</div> </div> </div>";
 		
 		
 		document.getElementById("overlay_content").innerHTML = content;
@@ -183,36 +222,43 @@ function insert_values_to_forms(id,value)
 	{
 		var idle_input = {{idle_input|safe}};
 		var output =  {{output|safe}};
+		console.log(output);
 		var user_inputs =  {{user_inputs|safe}};
 		
 		// content for outputs
+		var content = '<div class="container">  <div class="row">  <div class="col-md-4"> <div class="list-group">';
+		content += '<a href="#" class="list-group-item active col-1-head"> <h3> Application Output <span class="glyphicon glyphicon-log-out list-group-heading-icon"></h3></a> ';
+		
 		flag = 2;
-		var content = "<center> <br> <br> <br> <h3> Επιλέξτε ποιο παραγόμενο δεδομένο σας ταιριάζει: </h3> <br>";
+		//var content = "<center> <br> <br> <br> <h3> Choose applications output data: </h3> <br>";
 		for ( var i=0; i< output.length;i++)
-			content += "<h4 onclick='selected_values("+i+","+id+","+flag+")'> "+output[i].name+"</h4> "
+			content += '<a href="#" ondblclick="selected_values('+i+','+id+','+flag+')" class="list-group-item" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover"  data-content="'+output[i].description+'" data-title="'+output[i].slug+'"> '+output[i].name+'</a>';
+			//content += "<h4 onclick='selected_values("+i+","+id+","+flag+")'> "+output[i].name+"</h4> "
 		
+		content += "</div> </div>";
 		
+		content += '<div class="col-md-4">  <div class="list-group">  <a href="#" class="list-group-item active col-2-head"> <h3>Idle Application input data <span class="glyphicon glyphicon-log-in list-group-heading-icon"></span></h3></a>';
 		// content for idle inputs
 		flag = 3;
-		 content += " <br> <h3> Επιλέξτε ποια idle δεδομένα σας ταιριάζουν: </h3><br>";
 
 		for ( var i=0; i< idle_input.length;i++)
-			content += "<h4 onclick='selected_values("+i+","+id+","+flag+")'> "+idle_input[i].name+"</h4> "
+			content += '<a href="#" ondblclick="selected_values('+i+','+id+','+flag+')" class="list-group-item" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover"  data-content="'+idle_input[i].description+'" data-title="'+idle_input[i].slug+'"> '+idle_input[i].name+'</a>';
 		
 		
 		
 		// content for user inputs
 		if ( value == "Output")
 		{
+			content += "</div> </div>";
+			content += '<div class="col-md-4">  <div class="list-group">  <a href="#" class="list-group-item active col-3-head"> <h3>User Inputs <span class="glyphicon glyphicon-log-in list-group-heading-icon"></span></h3></a>';
 			flag = 4;
-			content += " <br><h3>Επιλέξτε ποια User Input δεδομένα σας ταιριάζουν: </h3><br> <br>";
 
 			for ( var i=0; i< user_inputs.length;i++)
-				content += "<h4 onclick='selected_values("+i+","+id+","+flag+")'> "+user_inputs[i].name+"</h4> "
+				content += '<a href="#" ondblclick="selected_values('+i+','+id+','+flag+')" class="list-group-item" data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover"  data-content="'+user_inputs[i].description+'" data-title="'+user_inputs[i].slug+'"> '+user_inputs[i].name+'</a>';
 		}
 		
 		
-		content += "<br><h4 onclick='selected_values("+i+","+id+",0)'> Αν δεν βρήκατε το δεδομένο που ψάχνετε πατήστε εδώ και εισάγετε τιμές στα πεδία</h4><br> <br></center>";
+		content += "<br><h4 onclick='selected_values("+i+","+id+",0)'> If you dont find the data you want, please import data in the fields</h4><br> <br></center>";
 		
 		
 		document.getElementById("overlay_content").innerHTML = content;
@@ -243,10 +289,10 @@ function selected_values(i,id,flag)
 		document.getElementById('id_form-'+id+'-name').value = profile_data[i];
 		document.getElementById('id_form-'+id+'-name').readOnly=true;
 
-		document.getElementById('id_form-'+id+'-domain').selectedIndex=4;
+		document.getElementById('id_form-'+id+'-domain').selectedIndex=3;
 		$( "#id_form-"+id+"-domain option:not(:selected)" ).prop('disabled',true); // disable all except selected value
 		
-		document.getElementById('id_form-'+id+'-description').value = "Το δεδομένο "+profile_data[i]+" από το προφίλ του χρήστη";
+		document.getElementById('id_form-'+id+'-description').value = profile_data[i]+" from user profile";
 		document.getElementById('id_form-'+id+'-description').readOnly=true;
 		
 		document.getElementById('id_form-'+id+'-slug').value = profile_data[i];
@@ -262,7 +308,7 @@ function selected_values(i,id,flag)
 		document.getElementById('id_form-'+id+'-name').value = String(profile_data[i].name);
 		document.getElementById('id_form-'+id+'-name').readOnly=true;
 		
-		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i].domain);
+		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i].domain - 7);
 		$( "#id_form-"+id+"-domain option:not(:selected)" ).prop('disabled',true); // disable all except selected value
 		
 		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i].description);
@@ -281,7 +327,7 @@ function selected_values(i,id,flag)
 		document.getElementById('id_form-'+id+'-name').value = String(profile_data[i].name);
 		document.getElementById('id_form-'+id+'-name').readOnly=true;
 		
-		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i].domain);
+		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i].domain- 7);
 		$( "#id_form-"+id+"-domain option:not(:selected)" ).prop('disabled',true); // disable all except selected value
 		
 		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i].description);
@@ -300,7 +346,7 @@ function selected_values(i,id,flag)
 		document.getElementById('id_form-'+id+'-name').value = String(profile_data[i].name);
 		document.getElementById('id_form-'+id+'-name').readOnly=true;
 		
-		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i].domain);
+		document.getElementById('id_form-'+id+'-domain').selectedIndex= String(profile_data[i].domain- 7);
 		$( "#id_form-"+id+"-domain option:not(:selected)" ).prop('disabled',true); // disable all except selected value
 		
 		document.getElementById('id_form-'+id+'-description').value = String(profile_data[i].description);
@@ -337,20 +383,39 @@ function selected_values(i,id,flag)
 
 </script>
 
-<div  id="left-content">
-	<h1>Δημιουργία εφαρμογής</h1><br>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+<script src="http:////cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+
+<div class="row">
+	<div class="col-xs-6 col-md-3">
+		<div id="left-container">
+			<h1>Application Creation</h1><br/>
+			<center><img src="/static/main/img/gadget.png"/><br/><br/><br/></center>
+			<p style="text-align:justify;">
+<!--
+				Στο κοινωνικό δίκτυο του MedWeight μπορείτε να δημιουργήσετε τις <b>δικές σας εφαρμογές.</b><br/>
+				Οι επιλογές δεξιά, σας παρέχουν όλες τις δυνατότητες τις οποίες χρειάζεστε για να μπορείτε να <a href = "/apps/new/">δημιουργήσετε </a>, <a href = "/apps/edit/"> επεξεργαστείτε </a> και <a href = "/apps/run/">εκτελέσετε </a> τις εφαρμογές σας.<br>
+				Ακόμα μπορείτε να <a href = "/apps/domain/new"> εισάγετε ένα νέο πεδίο εφαρμογών </a> και να έχετε μια <a href = "/apps/visualize">γραφική απεικόνιση των εφαρμογών που υπάρχουν μέχρι αυτή τη στιγμή</a>
+-->
+			</p>
+		</div>
+	</div>
+<div class="col-xs-6 col-md-6">
+	<br>
 	<form action="" method="POST">{% csrf_token %}
 		<div class="section" >
-			<table id="first-table"> 
+			<table id="first-table">
+			<h2>App Details</h2>
 			{% for field in main_form %}
-				<tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+				<tr> <td> {{ field.label}} </td>  <td> {{ field}} </td>  </tr>
 				<tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
 			{% endfor %}
 			</table>
 		
 		</div>
 
-		<h2>Δεδομένα</h2>
+		<h2>Data</h2>
 		{{ formset.management_form }}
 		{% for form in formset.forms %}
 		<div class="item">
@@ -358,16 +423,16 @@ function selected_values(i,id,flag)
 
 				{% for field in form %}
 					 
-					 <tr> <td> {{ field.label}}: </td>  <td> {{ field}} </td>  </tr>
+					 <tr> <td> {{ field.label}} </td>  <td> {{ field}} </td>  </tr>
 					 <tr>  <td>  </td> <td>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %} </td>  </tr>
 				{% endfor %}
 			  </table>
-		   <a  class="delete btn btn-danger" href="#">Διαγραφή</a>
+		   <a  class="delete btn btn-danger" href="#">{% trans "Delete" %}</a>
 		</div>
 		{% endfor %}
-		<a class="btn btn-success" id="add" href="#">Προσθήκη Δεδομένου</a>
+		<a class="btn btn-success" id="add" href="#">{% trans "New data" %} </a>
 
-		<input  class="btn btn-success" type="submit" value = "Αποθήκευση" /> 
+		<input  class="btn btn-success" type="submit" value = "Save" /> 
 	</form>
 </div>
 </div>

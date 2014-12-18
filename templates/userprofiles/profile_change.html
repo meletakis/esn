@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load i18n %}
-{% block title %}{% trans "Επεξεργασία προφίλ" %}{% endblock %}
+{% block title %}{% trans "Profile edit" %}{% endblock %}
 
 {% block content %}
 <script type="text/javascript">
@@ -16,22 +16,22 @@ $(function() {
         
   <div class="col-xs-6 col-md-3" id="left-content">
 
-	<h1>{% trans "Επεξεργασία προφίλ" %}</h1>
+	<h1>{% trans "Profile edit" %}</h1>
 	{% for field in form %}
 	{% if field.label = "Εικόνα" %}
-	<b>{{ field.label}}:</b>{{field}}{{ image_form.as_p }}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+	<b>Image:</b>{{field}}{{ image_form.as_p }}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 	{% endif %}
 	{% if field.label = "Εμφανιζόμενο Όνομα"%}
-	<b>{{ field.label}}:</b>{{field}}<br/>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+	<b>Display name:</b>{{field}}<br/>  {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 	{% endif %}
 	{% if field.label = "Ονοματεπώνυμο"%}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+	<b>Name:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 	{% endif %}
-	{% if field.label = "Φύλο"%}
-	<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+	{% if field.label = "Gender"%}
+	<b>Gender:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 	{% endif %}
 	{% endfor %}
-	<center><button class="btn btn-success" type="submit">{% trans "Αποθήκευση" %}</button>&nbsp;<a class="btn btn-danger" href="/user/profile/{{ user.username }}">Επιστροφή στο προφίλ</a><br/></center><br/><br/>
+	<center><button class="btn btn-success" type="submit">{% trans "Save" %}</button>&nbsp;<a class="btn btn-danger" href="/user/profile/{{ user.username }}">Return to profile</a><br/></center><br/><br/>
 	
   </div>
   <div class="col-xs-6 col-md-5">
@@ -40,42 +40,42 @@ $(function() {
 	{% if user.profile.role|stringformat:"s" != "Developer" %} 
 		{% for field in form %}
 			{% if field.label = "Περιγραφή" %}
-			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			<b>Description:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 			{% endif %}
 			{% if field.label = "Περιοχή" %}
-			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			<b>Area:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 			{% endif %}
 			{% if field.label = "Ημερομηνία Γέννησης" %}
+			<b>Birthday date:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+			{% endif %}
+			{% if field.label = "Family Status" %}
 			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 			{% endif %}
-			{% if field.label = "Οικογενειακή Κατάσταση" %}
+			{% if field.label = "Activities" %}
 			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 			{% endif %}
-			{% if field.label = "Δραστηριότητες" %}
-			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-			{% endif %}
-			{% if field.label = "Σπουδές" %}
+			{% if field.label = "Studies" %}
 			<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 			{% endif %}
 		{% endfor %}
 	{% else %} <!-- developer profile -->
 		{% for field in form %}
 				{% if field.label = "Περιγραφή" %}
-				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				<b>Description:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 				{% endif %}
 				{% if field.label = "Περιοχή" %}
-				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				<b>Area:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 				{% endif %}
 				{% if field.label = "Ημερομηνία Γέννησης" %}
+				<b>Birthday date:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
+				{% endif %}
+				{% if field.label = "Family Status" %}
 				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 				{% endif %}
-				{% if field.label = "Οικογενειακή Κατάσταση" %}
+				{% if field.label = "Activities" %}
 				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 				{% endif %}
-				{% if field.label = "Δραστηριότητες" %}
-				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
-				{% endif %}
-				{% if field.label = "Σπουδές" %}
+				{% if field.label = "Studies" %}
 				<b>{{ field.label}}:</b>{{field}}<br/> {% if field.errors %} <div class="alert alert-danger">{{field.errors}}</div> {% endif %}
 				{% endif %}
 		{% endfor %}
@@ -84,6 +84,7 @@ $(function() {
             
         
 </div>
+<!--
 <div class="col-xs-6 col-md-4"><br/><br/>
 {% if user.profile.role|stringformat:"s" != "Developer" %} 
 	{% for field in form %}
@@ -99,6 +100,7 @@ $(function() {
 	{% endfor %}
 {% endif %}
 </div>
+-->
 </fieldset></form>
 </div>
 

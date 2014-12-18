@@ -24,6 +24,7 @@ from applications.compat import get_user_model
 from applications.actions import action_handler
 from django.utils.translation import ugettext as _
 
+
 User = get_user_model()
 
 
@@ -55,7 +56,8 @@ class App(models.Model):
             'description' : self.description,
             'domain' : self.domain.id,
             'responsibility' : self.responsibility.Name,
-            'active' : self.is_active  }
+            'active' : self.is_active,
+            'author' : self.author.username  }
 
     
 class Data(models.Model):

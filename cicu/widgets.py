@@ -31,13 +31,13 @@ class CicuUploaderInput(forms.ClearableFileInput):
         self.options += (options.get('ratioHeight', ''),)
         #input message customization and translation
         self.options += (options.get('modalButtonLabel', _("<span class='glyphicon glyphicon-camera'></span>")),)
-        self.options += (options.get('changeButtonText', _('Αλλαγή εικόνας'.decode('utf-8'))),)
+        self.options += (options.get('changeButtonText', _('Change Image'.decode('utf-8'))),)
         self.options += (options.get('sizeAlertMessage', _('Warning: The area selected is too small.  Min size:')),)
         self.options += (options.get('sizeErrorMessage', _("Image doesn't meet the minimum size requirements ")),)
-        self.options += (options.get('modalSaveCropMessage', _('Ορισμός εικόνας'.decode('utf-8'))),)
-        self.options += (options.get('modalCloseCropMessage', _('Κλείσιμο'.decode('utf-8'))),)
-        self.options += (options.get('uploadingMessage', _('Ανέβασμα εικόνας...'.decode('utf-8'))),)
-        self.options += (options.get('fileUploadLabel', _('Επιλέξτε εικόνα από τον υπολογιστή σας.'.decode('utf-8'))),)
+        self.options += (options.get('modalSaveCropMessage', _('Save Image'.decode('utf-8'))),)
+        self.options += (options.get('modalCloseCropMessage', _('Close'.decode('utf-8'))),)
+        self.options += (options.get('uploadingMessage', _('Uploading image...'.decode('utf-8'))),)
+        self.options += (options.get('fileUploadLabel', _('Upload an image from your pc.'.decode('utf-8'))),)
 
     def render(self, name, value, attrs=None):
         attrs = attrs or {}

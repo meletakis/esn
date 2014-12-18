@@ -38,23 +38,23 @@
 				{% if user.profile.role|stringformat:"s" == "Developer" %} <!--# check if user is developer -->
 					<ul class="nav navbar-nav" id="main-nav">
 						<a class="navbar-brand" href="#"><img width="50" src="/static/main/img/unity.gif" alt="Unity Logo"/></a>
-						<li><a href="/">Αρχική</a></li>
-						<li><a href="/user/profile/{{user.username}}">Προφίλ</a></li>
-						<li><a href="/user/search/">Χρήστες</a></li>
-						<li><a href="/groups/">Ομάδες</a></li>  
-						<li><a href="/apps/">Εφαρμογές</a> </li> 
+						<li><a href="/">Home</a></li>
+						<li><a href="/user/profile/{{user.username}}">{% trans "Profile" %}</a></li>
+						<li><a href="/user/search/">{% trans "Users" %}</a></li>
+						<li><a href="/groups/">{% trans "Groups" %}</a></li>  
+						<li><a href="/apps/">{% trans "Applications" %}</a> </li> 
 						{% if user.is_superuser %}
-							<li><a href="/admin" target="blank">Διαχείριση</a> </li> 
+							<li><a href="/admin" target="blank">{% trans "Admin Panel" %}</a> </li> 
 						{% endif %}
 					</ul>
 				{%else%}						
 					<ul class="nav navbar-nav" id="main-nav">
 						<a class="navbar-brand" href="#"><img width="50" src="/static/main/img/unity.gif" alt="Unity Logo"/></a>
-						<li><a href="/">Αρχική</a></li>
-						<li><a href="/user/profile/{{user.username}}">Προφίλ</a></li>
-						<li><a href="/user/search">Χρήστες</a></li>  
-						<li><a href="/groups/">Ομάδες</a></li>
-						<li><a href="/apps">Εφαρμογές</a> </li> 
+						<li><a href="/">Home</a></li>
+						<li><a href="/user/profile/{{user.username}}">{% trans "Profile" %}</a></li>
+						<li><a href="/user/search/">{% trans "Users" %}</a></li>
+						<li><a href="/groups/">{% trans "Groups" %}</a></li>  
+						<li><a href="/apps/">{% trans "Applications" %}</a> </li> 
 					</ul>
 				{% endif %}
 				
@@ -71,7 +71,7 @@
 								<iframe id="notifications-tab" scrolling="yes" frameborder="0" src="/notifications/unread"></iframe>	
 							</div>
 						</div>
-						&nbsp;<a class="profile-picture-prev" data-toggle="tooltip" title="{{user.profile.displayName}}" href="/user/profile/{{user.username}}"><img src="{{user.profile.thumbnailURL}}" class="img-rounded" title="{{user.profile.displayName}}" /></a>&nbsp;&nbsp;<a href="/user/logout/" class="btn btn-primary">Αποσύνδεση</a></div>
+						&nbsp;<a class="profile-picture-prev" data-toggle="tooltip" title="{{user.profile.displayName}}" href="/user/profile/{{user.username}}"><img src="{{user.profile.thumbnailURL}}" class="img-rounded" title="{{user.profile.displayName}}" /></a>&nbsp;&nbsp;<a href="/user/logout/" class="btn btn-primary">{% trans "Logout" %}</a></div>
 					</ul>
 				</div>
 			</div><br>

@@ -2,4 +2,8 @@ from django.contrib import admin
 from django.contrib.sites.models import RequestSite
 from roleapp.models import Role
 
-admin.site.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'id', 'type', 'desc', )
+    list_editable = ('id', 'type', 'desc', )
+
+admin.site.register(Role,RoleAdmin)

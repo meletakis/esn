@@ -1,7 +1,7 @@
 {% block content %}
 
 {% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language as en %}
 
 <center>
 
@@ -10,16 +10,16 @@
   <div class="container">
 
 <img width="180" src="/static/main/img/unity.gif" alt="MedWeight Logo"/>
-<h2>Σύνδεση</h2>
+<h2>Log in</h2>
 
 {% if user.is_authenticated %}
-Hi, ({{ user.username }}). <a href="{% url 'auth_logout' %}">Αποσύνδεση</a>
+Hi, ({{ user.username }}). <a href="{% url 'auth_logout' %}">Logout</a>
 {% else %}
 {% include "form.html" %}
     
 
-    <a href="{% url 'auth_password_reset' %}">Ανάκτηση Κωδικού</a><!-- | <a href="/user/register/">Εγγραφή--></a><br>
-    <a href="/user/developer/register">Εγγραφή Προγραμματιστών</a><!-- | <a href="/user/register/">Εγγραφή--></a>
+    <a href="{% url 'auth_password_reset' %}">Remember Password</a><!-- | <a href="/user/register/">Εγγραφή--></a><br>
+    <a href="/user/developer/register">Developers Sign Up</a><!-- | <a href="/user/register/">Εγγραφή--></a>
     
   
 {% endif %}

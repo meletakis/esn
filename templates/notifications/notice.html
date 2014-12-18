@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load url from future %}
 <div id="notification-msg">
     <div class="media">
@@ -6,31 +7,35 @@
     </a>
     <div class="media-body">
     <i class="icon-mail{% if notice.unread %}-alt{% endif %}"></i>
-    Ο χρήστης <a onclick="window.top.location.href = '/user/profile/{{notice.actor}}'" href="/user/profile/{{notice.actor}}">{{ notice.actor.profile.displayName }} </a>
+    User <a onclick="window.top.location.href = '/user/profile/{{notice.actor}}'" href="/user/profile/{{notice.actor}}">{{ notice.actor.profile.displayName }} </a>
 		{% if notice.verb == "Pending" %}
-			σας πρόσθεσε σαν φίλο. 
+			{% trans "added you as fellow" %}. 
 		{% elif notice.verb == "Following" %}
-			σας ακολουθεί.
-		{% elif notice.verb == "Friends" %}
-			έγινε φίλος σας.
+			{% trans "follows you" %}.
+		{% elif notice.verb == "Fellow" %}
+			{% trans "is a new fellow" %}.
 		{% elif notice.verb == "wall_post" %}
-			έγραψε στον τοίχο σας.
+			{% trans "post on your wall" %}.
 		{% elif notice.verb == "signed_up" %}
-			<a href="/admin/auth/user/" target="blank" >μόλις έκανε εγγραφή.</a>
+			<a href="/admin/auth/user/" target="blank" >{% trans "signed up" %}.</a>
 		{% elif notice.verb == "request_responsibility" %}
-			<a href="/admin/responsibilities/" target="blank" >μόλις έκανε αίτηση για νέο Responsibility.</a>
+			<a href="/admin/responsibilities/" target="blank" >{% trans "made a request for responsibility" %}.</a>
 		{% elif notice.verb == "created_idle_input" %}
-			 δημιούργησε ως έξοδο από μια εφαρμογή του το <p style="color:green">{{notice.description}}.</p>
+			 produce your idle application input <p style="color:green">{{notice.description}}.</p>
 		{% elif notice.verb == "responsibility_accepted" %}
-			έκανε δεκτό το αίτημα σας για το responsibility <i>{{notice.description}} <i>.>
+			{% trans "accept your responsibility request" %} <i>{{notice.description}} <i>.>
 		{% elif notice.verb == "responsibility_rejected" %}
-			απέριψε το αίτημα σας για το responsibility <i>{{notice.description}}<i>.
+			{% trans "reject your responsibility request" %} <i>{{notice.description}}<i>.
+		{% elif notice.verb == "app_activated" %}
+			{% trans "activated your application" %}  <i>{{notice.description}}<i>.
+		{% elif notice.verb == "executed_app" %}
+			{% trans "executed application" %}  <i>{{notice.description}}<i>.
 		{% elif notice.verb == "created_new_app" %}
-			δημιούργησε την εφαρμογή <a href="/admin/applications/app/" target="blank" >{{notice.description}}</a>.
-		{% elif notice.verb == "Maintainers Followers" %}
-			σας ακολουθεί.
-		{% elif notice.verb == "Maintainers Followers" %}
-			σας ακολουθεί.
+			{% trans "created app" %} <a href="/admin/applications/app/" target="blank" >{{notice.description}}</a>.
+		{% elif notice.verb == "Tutor" %}
+			{% trans "follows you" %}.
+		{% elif notice.verb == "Facilitator" %}
+			{% trans "follows you" %}.
 		{% endif %}
 		{% if notice.target %}
 		  of {{ notice.target }}

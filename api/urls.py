@@ -4,6 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from api import * #RoleTypeResource, UserProfileResource, UserResource, RelationshipStatusResource, RelationshipResource, AppStreamResource, AppDataResource, AppResource, ContentTypeResource
+from resources import *
 
 
 rest = Api(api_name='esn')
@@ -18,6 +19,11 @@ rest.register(AppResource())
 rest.register(ContentTypeResource())
 rest.register(ActionStreamResource())
 rest.register(NotificationsResource())
+rest.register(Ethesis_confirmation_Resource())
+rest.register(Owed_courses_Resource())
+rest.register(UserExtendedResource())
+rest.register(ExtendedNotificationResource())
+rest.register(ExtendedRelationshipResource())
 
 #role_resource = RoleTypeResource()
 #user_resource = UserProfileResource()

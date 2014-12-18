@@ -15,29 +15,32 @@
  <div id="left-container"><h1>{{ displayName }}</h1><br/><p>
 <a href="{{thumbnailURL}}" target="_blank"><img class="img-thumbnail" width="150" src="{{thumbnailURL}}" alt="User Profile Picture"/></a><br/><br/>
 
-{% if name %} <b>Όνομα: </b> {{name}}<br/> {% endif %}
-{% if gender %} <b>Φύλο: </b> {{gender}}<br/> {% endif %}
-{% if birthday %} <b>Γενέθλια: </b> {{birthday}}<br/> {% endif %}
-{% if aboutMe %} <b>Σχετικά με εμένα: </b> {{aboutMe}}<br/> {% endif %}
-{% if status %} <b>Κατάσταση: </b> {{status}}<br/> {% endif %}
-{% if location %} <b>Περιοχή: </b> {{location}}<br/> {% endif %}
-{% if activities %} <b>Δραστηριότητες: </b> {% endif %}
+{% if name %} <b>Name: </b> {{name}}<br/> {% endif %}
+{% if gender %} <b>Gender: </b> {{gender}}<br/> {% endif %}
+{% if birthday %} <b>Birthday: </b> {{birthday}}<br/> {% endif %}
+{% if aboutMe %} <b>About me: </b> {{aboutMe}}<br/> {% endif %}
+{% if status %} <b>Status: </b> {{status}}<br/> {% endif %}
+{% if location %} <b>Area: </b> {{location}}<br/> {% endif %}
+{% if activities %} <b>Activites: </b> {% endif %}
 <ul>
 {% for activity in activities.all %}
 	<li>{{ activity.activity }} </li>
 {% endfor %}
 </ul>
 
-{% if studies %} <b>Σπουδές: </b> {{studies}}<br/> {% endif %}
+{% if studies %} <b>Studies: </b> {{studies}}<br/> {% endif %}
+<!--
 {% if favouriteFood %} <b>Αγαπημένο Φαγητά: </b> {{favouriteFood}}<br/> {% endif %}
 {% if favouriteSport %} <b>Αγαπημένα Αθλήματα: </b> {{favouriteSport}}<br/> {% endif %}
 {% if interests %} <b>Λοιπά Ενδιαφέροντα: </b> {{interests}}<br/> {% endif %}
+-->
 </p> 
 
 {% if user.is_authenticated %}
 {% if user.username = username %}
 <br/>{% include "relationships/view_relationships.html" %}
- 
+<br><br>
+  <a href="/user/profile/edit/{{username}}" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Profile Edit</a> 
 
 {% endif %}
 {% endif %}
@@ -54,11 +57,11 @@
 <div class="col-xs-6 col-md-3">
 <div id="profile-options">
 {% if user.username = username %}
+<!--
 <div class="alert alert-info" id="help-text-container"><span class="glyphicon glyphicon-question-sign">&nbsp;<strong>Βοήθεια</strong></span><hr/>
 <p id="help-text">Περάστε το ποντίκι σας πάνω από τις διαθέσιμες επιλογές σας στη σελίδα που βρίσκεστε και μάθετε περισσότερα για αυτές.</p>
-
+-->
 </div>
- <a href="/user/profile/edit/{{username}}" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Επεξεργασία Προφίλ</a> 
 
 {% else %}
 

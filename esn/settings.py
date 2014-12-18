@@ -16,10 +16,10 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'esn',                      # Or path to database file if using sqlite3.
+        'NAME': 'esn_eng',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'm3dweight!',
         'HOST': 'localhost',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
@@ -34,7 +34,8 @@ TIME_ZONE = 'Europe/Athens'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'el'
+LANGUAGE_CODE = 'en'
+ADMIN_LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 
@@ -56,7 +57,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_ROOT = '/home/user/esn/uploaded_media/'
+MEDIA_ROOT = '/home/user/esn_eng/uploaded_media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -67,7 +68,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = '/home/user/esn/static/'
+STATIC_ROOT = '/home/user/esn_eng/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -96,6 +97,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
    # "account.context_processors.account",
     "django.contrib.auth.context_processors.auth",
     'django.core.context_processors.request',
+    'django.core.context_processors.i18n',
 )
 
 AUTH_PROFILE_MODULE = 'userprofiles.UserProfile'
@@ -125,7 +127,7 @@ ROOT_URLCONF = 'esn.urls'
 WSGI_APPLICATION = 'esn.wsgi.application'
 
 TEMPLATE_DIRS = (
-	'/home/user/esn/templates'
+	'/home/user/esn_eng/templates'
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -201,5 +203,6 @@ LOGIN_REDIRECT_URL = 'http://83.212.117.41:8000/'
 LOGIN_URL = '/user/login/'
 
 LOCALE_PATHS = (
-    '/home/user/esn/locale', # replace with correct path here
+    '/home/user/esn_eng/locale', # replace with correct path here
 )
+

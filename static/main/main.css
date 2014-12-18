@@ -1,5 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,300,600,700&subset=latin,greek);
 
+
 body {
 	height: 100%;
 }
@@ -232,4 +233,12 @@ img.small {
 #help-text-container {
 	margin-top: 10%;
 	margin-right:10px;
+}
+
+/* APPS */
+#app-actions {
+	margin-top: 20px;
+}
+#app-actions span {
+	margin-right: 10px;
 }

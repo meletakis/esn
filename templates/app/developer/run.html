@@ -4,11 +4,11 @@
 
 		<div class="row">
 			<div class="col-xs-6 col-md-3">
-				 <div id="left-container"><h3>Εκτέλεση Εφαρμογών</h3>
+				 <div id="left-container"><h3>Run Applications</h3>
 					 <br/><center><img src="/static/main/img/gadget.png" width="120"/></center><br/>
-					 <p style="text-align:justify">Καλωσήλθατε στην βασική οθόνη των <b>Εφαρμογών</b>.
+					 <p style="text-align:justify">
 					 {% if apps %}
-					 Εδώ μπορείτε να εκτελέσετε τις εφαρμογές που ανήκουν στον ρόλο σας. <br>
+					 Execute application for your role. <br>
 					 <ul class="nav nav-pills nav-stacked"> 
 							 {% for app in apps %}
 								<li>
@@ -21,8 +21,7 @@
 					<!--<a href="/apps/new/">New Gadget</a>--> <br>
 					</ul>
 					{% if apps_created %}
-						Ακόμα μπορείτε να εκτελέτε τις εφαρμογές που έχετε δημιουργήσει. <br>
-						 Οι εφαρμογές σας είναι: <br/>
+						The applications above is created by you: <br/>
 						 <ul class="nav nav-pills nav-stacked"> 
 						
 							 {% for app in apps_created %}
@@ -38,7 +37,7 @@
 				</div>
 			</div>
 			<div class="col-xs-6 col-md-6"><br/><br/>
-					<div id='iframe'><div class="app-screen-text">Οθόνη φόρτωσης Εφαρμογών</div>
+					<div id='iframe'><div class="app-screen-text">Load Application</div>
 			</div>
 		</div>
 

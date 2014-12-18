@@ -88,12 +88,14 @@ def stream(request, template='actstream/actor.html', page_template='actstream/ac
 	for wp_id in posts_set_user_ids:
 		posts_set_by_user.extend(Action.objects.filter( id = wp_id ) )
 		
-	
 	relation_ct = ContentType.objects.get(app_label="relationships", model="relationshipstatus") # User Content Type
 	
 	##########posts by other related users ######
 	for related_users in Relationship.objects.all().filter(from_user_id = viewer.id ):
+		print "RELATED"
+		print related_users.to_user_id
 		actions_list = Action.objects.filter( Q(verb='posted' ) & Q(actor_object_id = related_users.to_user_id )  & Q(target_object_id = related_users.status_id) & Q(actor_content_type_id = user_ct.id) & Q(target_content_type_id = relation_ct.id))
+		print actions_list
 		posts_set_distinct = list ( actions_list.values_list('timestamp').distinct())
 		for y in Action.objects.filter( Q(verb='posted' ) &  ( Q(actor_object_id = related_users.to_user_id) ) & Q(target_object_id = related_users.status_id) & Q(actor_content_type_id = user_ct.id) & Q(target_content_type_id = relation_ct.id) ):
 			for x in posts_set_distinct:
@@ -118,7 +120,8 @@ def stream(request, template='actstream/actor.html', page_template='actstream/ac
 					posts_set_user_ids.append(y.id)
 				
 	for wp_id in posts_set_user_ids:
-		posts_final_mentioned_for_this_user.extend(Action.objects.filter( id = wp_id ) )
+		if not any(x.id == wp_id for x in posts_set_by_user): #check for duplicate records in posts_set_by_user
+			posts_final_mentioned_for_this_user.extend(Action.objects.filter( id = wp_id ) )
 		
 		
 	##########posts from groups ######
@@ -135,6 +138,15 @@ def stream(request, template='actstream/actor.html', page_template='actstream/ac
 	print "RELATED GROUPS"
 	print related_org
 	
+	print "THIS POSTS"
+	
+	print posts_set_by_user
+	print posts_final
+	print posts_final_by_other_users
+	print posts_final
+	print posts_final_mentioned_for_this_user
+	print posts_final
+	print type(group_actions_list)
 	
 	posts_final = posts_final_by_other_users+ posts_set_by_user + posts_final_mentioned_for_this_user + group_actions_list
 	print posts_final
@@ -173,6 +185,7 @@ def stream(request, template='actstream/actor.html', page_template='actstream/ac
 	'actor': request.user, 'action_list': posts_final, 'related_groups':related_org, 'users':suggested_users, 'username':request.user.username
 	}, context_instance=RequestContext(request))
 	'''
+
 	iform = freeCrop(request.POST)
 	context =  {
 	'ctype': ContentType.objects.get_for_model(User),
@@ -183,6 +196,7 @@ def stream(request, template='actstream/actor.html', page_template='actstream/ac
 	'users':suggested_users,
 	'image_form':iform,
 	'username':request.user.username,
+	'user_relationships' : user_relationships,
 	'contacts':contacts
 	}
 	
@@ -355,6 +369,7 @@ def new_wall_post (request):
 				content = content + image_url
 				actor_name = form.cleaned_data['actor_name']
 				post_target = form.cleaned_data['target']
+				print post_target
 				#####################
 				owner_user = User.objects.get(username__exact = actor_name) # user creation
 				owner_user_role = UserProfile.objects.get( user_id = owner_user.id )
@@ -369,8 +384,17 @@ def new_wall_post (request):
 				elif post_target == "Public":
 					print "public target"
 					print owner_user_role.role_id
-					for relationship in RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id):
-						action.send(viewer, verb='posted', action_object = owner_user, target=relationship,  post_content=content) # action creation
+					if  (RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id).count() == 0 ):
+						print " No relationship found "
+						if  (RelationshipStatus.objects.all().filter (to_role_id__isnull=True ).count() >= 0 ):
+							for relationship in RelationshipStatus.objects.all().filter (to_role_id__isnull=True):
+								action.send(viewer, verb='posted', action_object = owner_user, target=relationship,  post_content=content)
+					else:
+						for relationship in RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id):
+							action.send(viewer, verb='posted', action_object = owner_user, target=relationship,  post_content=content) # action creation
+						if  (RelationshipStatus.objects.all().filter (to_role_id__isnull=True ).count() >= 0 ):
+							for relationship in RelationshipStatus.objects.all().filter (to_role_id__isnull=True):
+								action.send(viewer, verb='posted', action_object = owner_user, target=relationship,  post_content=content)
 				else:
 					for relationship in RelationshipStatus.objects.all().filter (Q(to_role_id = owner_user_role.role_id) & Q(name = post_target )):
 						action.send(viewer, verb='posted', action_object = owner_user, target=relationship,  post_content=content) # action creation
@@ -391,6 +415,7 @@ def new_wall_post (request):
 	
 def get_actions_by_user( viewer, owner ):
 	wall_posts = []
+	wall_posts_null_relationships = []
 	wall_posts_ids = []
 		# Viewer is owner
 	if viewer == owner:
@@ -421,8 +446,22 @@ def get_actions_by_user( viewer, owner ):
 					print "NO RELATIONSHIP"
 			else:
 				print " NO RELATIONSHIP"
+		'''		
+		for null_relationship_status in RelationshipStatus.objects.all().filter (to_role_id__isnull=True ):
+			if null_relationship_status:
+				print null_relationship_status.id
+				if Relationship.objects.all().filter( Q(to_user_id = owner.id) & Q(from_user_id = viewer.id) & Q(status_id = null_relationship_status.id) ).exists():
+					wall_posts_null_relationships = Action.objects.filter( Q(verb='posted' ) & Q(target_object_id = null_relationship_status.id) & Q(action_object_object_id = owner.id))
 				
-	return wall_posts
+					
+					print "RELATIONSHIP EXIST"
+				else:
+					print "NO RELATIONSHIP"
+			else:
+				print " NO RELATIONSHIP"
+		'''
+				
+	return wall_posts + wall_posts_null_relationships
 
 def new_group_post (request):
 	image_url=''

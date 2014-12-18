@@ -30,25 +30,26 @@ class UserEditProfileForm (ModelForm):
 	def __init__(self, *args, **kwargs):
 		super(UserEditProfileForm, self).__init__(*args, **kwargs)
 		SEX_CHOICES = (
-			('Άντρας', 'Άντρας'),
-			('Γυναίκα', 'Γυναίκα'),
+			('Male', 'Male'),
+			('Female', 'Female'),
 		)
 		
 		STUDIES_CHOICES = (
-			('Υποχρεωτική Εκπαίδευση', 'Υποχρεωτική Εκπαίδευση'),
-			('Απόφοιτος ΑΕΙ-ΤΕΙ', 'Απόφοιτος ΑΕΙ-ΤΕΙ'),
-			('Μεταπτυχιακό', 'Μεταπτυχιακό'),
+			('Basic studies', 'Basic studies'),
+			('Bachelor degree', 'Bachelor degree'),
+			('Master degree', 'Master degree'),
+			('PhD degree', 'PhD degree'),
 		)		
 
 		STATUS_CHOICES = (
-			('Άγαμος', 'Άγαμος'),
-			('Έγγαμος', 'Έγγαμος'),
-			('Διαζευγμένος-Χήρος', 'Διαζευγμένος-Χήρος'),
+			('Single', 'Single'),
+			('Married', 'Married'),
+			('Divorced', 'Divorced'),
 		)
-		self.fields['gender'] = forms.ChoiceField(widget=forms.RadioSelect(),choices=SEX_CHOICES, label="Φύλο")
-		self.fields['status'] = forms.ChoiceField(widget=forms.RadioSelect(),choices=STATUS_CHOICES, label="Οικογενειακή Κατάσταση")
-		self.fields['studies'] = forms.ChoiceField(widget=forms.RadioSelect(),choices=STUDIES_CHOICES, label="Σπουδές")
-		self.fields['activities'] = forms.ModelMultipleChoiceField(queryset=Activities.objects.all(), required=False, widget=forms.CheckboxSelectMultiple, label="Δραστηριότητες")
+		self.fields['gender'] = forms.ChoiceField(widget=forms.RadioSelect(),choices=SEX_CHOICES, label="Gender")
+		self.fields['status'] = forms.ChoiceField(widget=forms.RadioSelect(),choices=STATUS_CHOICES, label="Family Status")
+		self.fields['studies'] = forms.ChoiceField(widget=forms.RadioSelect(),choices=STUDIES_CHOICES, label="Studies")
+		self.fields['activities'] = forms.ModelMultipleChoiceField(queryset=Activities.objects.all(), required=False, widget=forms.CheckboxSelectMultiple, label="Activities")
 		
 
 	class Meta:	
@@ -61,12 +62,12 @@ class UserEditProfileForm (ModelForm):
 		}
 		fields = [ 'thumbnailURL','aboutMe','location', 'birthday','displayName', 'name', 'status','studies', 'activities',  'favouriteFood', 'favouriteSport', 'gender', 'interests' ]
 		widgets = {
-            		'aboutMe': Textarea(attrs={'class':'form-control', 'row':'5','placeholder':'Λίγα λόγια για εσάς!'}),
+            		'aboutMe': Textarea(attrs={'class':'form-control', 'row':'5','placeholder':'Say something for you!'}),
 			'displayName': TextInput(attrs={'class':'form-control'}),
-			'birthday': DateInput(attrs={'class':'datepicker form-control', 'placeholder':'ηη/μμ/εεεε'}),
+			'birthday': DateInput(attrs={'class':'datepicker form-control', 'placeholder':'dd/mm/yyyy'}),
 			'name': TextInput(attrs={'class':'form-control'}),
 			'status': Textarea(attrs={'class':'form-control'}),
-			'location': TextInput(attrs={'class':'form-control', 'placeholder':'πχ. Αθήνα'}),
+			'location': TextInput(attrs={'class':'form-control', 'placeholder':'πχ. Athens'}),
 			'studies': TextInput(attrs={'class':'form-control'}),
 			'activities': TextInput(attrs={'class':'form-control'}),
 			'favouriteFood': Textarea(attrs={'class':'form-control'}),

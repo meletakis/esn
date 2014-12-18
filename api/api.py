@@ -1,6 +1,6 @@
 from tastypie.authorization import Authorization
 import copy
-from tastypie.resources import ModelResource, ALL
+from tastypie.resources import ModelResource, ALL, Resource
 from tastypie import fields
 from django.contrib.auth.models import User
 
@@ -11,16 +11,19 @@ from actstream.models import Action as activities
 from notifications.models import Notification as notifications
 from applications.models import Action as appaction
 from applications.models import App, Data
+from responsibilities.models import Responsibility, Assignment
 from django.contrib.contenttypes.models import ContentType
+import random
 
 
 class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
-        resource_name = 'user'
+        resource_name = 'users'
         authorization= Authorization()
         filtering = {
 		'is_superuser' : ALL,
+		'username' : ALL,
 		}
 
 
@@ -60,6 +63,9 @@ class UserProfileResource(ModelResource):
 		resource_name = 'profile'
 		excludes = [] # poia na min emfanizei
 		#fields = ['id'] # poia na emfanizei
+		filtering = {
+			'user' : ALL
+			}
 		include_resource_uri = False
 		authorization= Authorization()
 			#http://127.0.0.1:8000/api/roles/list/?type__startswith=M returns "Maintainers"
@@ -166,5 +172,39 @@ class NotificationsResource(ModelResource):
 		allowed_methods = ['get','post',]
 		authorization= Authorization() 
 		include_resource_uri = False     
+
+class Ethesis_confirmation_Resource(ModelResource):
+
+	class Meta:
+		queryset = User.objects.all()
+		allowed_methods = ['get']
+		authorization= Authorization()
+		resource_name = 'ethesis_confirmation'
+		filtering = {
+			'id' : ALL
+			}
+		fields = ['id','username']
+
+
+	def dehydrate(self, bundle):
+	    bundle.data['ethesis_confirmation'] = random.choice(['not submitted', 'submitted', 'accepted'])
+	    return bundle
+	    
+class Owed_courses_Resource(ModelResource):
+
+	class Meta:
+		queryset = User.objects.all()
+		allowed_methods = ['get']
+		authorization= Authorization()
+		resource_name = 'owed_courses'
+		filtering = {
+			'id' : ALL
+			}
+		fields = ['id','username']
+
+
+	def dehydrate(self, bundle):
+	    bundle.data['owed_courses'] = random.choice(['0', '2', '4'])
+	    return bundle
 
 

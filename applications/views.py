@@ -19,7 +19,9 @@ from django.db.models import Q
 from notifications import notify
 import simplejson
 import json
-
+from django.forms.models import modelformset_factory
+from relationships.models import RelationshipStatus
+from actstream import actions, models, compat, action
 
 def index(request):
     
@@ -47,8 +49,6 @@ def index(request):
             pass
         else:
             pass
-
-        print apps
 
         return render(request, 'app.html', {'apps' : apps })
 
@@ -135,7 +135,13 @@ def edit(request):
     if str(request.user.profile.role) != "Developer":
         return HttpResponseRedirect('/')
     else:
-        apps = App.objects.filter(author = request.user )
+    	apps_id = set()
+        apps = App.objects.filter(author = request.user ) #take all users applications
+        for app in apps: #find apps that they DONT have idle inputs and remove them from queyset
+        	if  not ( IORegistry.objects.filter( app_id = app.id  , idle = True ).count() == 0): 
+        		apps_id.add(app.id )
+        		
+        apps = App.objects.filter(pk__in = apps_id)
         return render_to_response('app/developer/edit.html', {'apps' : apps },context_instance=RequestContext(request))
 
 def run(request):
@@ -194,6 +200,70 @@ def new_domain(request):
     c.update(csrf(request))
     
     return render_to_response('app/developer/domain.html', c, context_instance=RequestContext(request))
+                                            
+
+
+
+def remove(request):
+    if str(request.user.profile.role) != "Developer":
+        return HttpResponseRedirect('/')
+    else:
+        apps_created= App.objects.filter(author = request.user )
+                
+    return render_to_response('app/developer/remove.html', {'apps_created':apps_created, }, context_instance=RequestContext(request))
+
+
+
+def remove_specific_app(request,app_id):
+
+    app_name = App.objects.get(pk = app_id ).name
+    ioregistry_inputs = IORegistry.objects.filter( app_id = app_id, data_type = "Input" )
+    for ioregistry_input in ioregistry_inputs:
+    	if (IORegistry.objects.filter( data_id = ioregistry_input.data_id).count() <= 1 ):
+    		Data.objects.filter(pk = ioregistry_input.data_id ).delete()
+    	IORegistry.objects.filter( pk = ioregistry_input.id).delete()
+
+
+    ioregistry_outputs = IORegistry.objects.filter( app_id = app_id, data_type = "Output" )
+    for ioregistry_output in ioregistry_outputs:
+    	if (IORegistry.objects.filter( data_id = ioregistry_output.data_id).count() == 1 ): #if exist only one row with this data delete it
+    		IORegistry.objects.filter( pk = ioregistry_output.id).delete()
+    		Data.objects.filter(pk = ioregistry_output.data_id ).delete()
+
+    	elif ( IORegistry.objects.filter( data_id = ioregistry_output.data_id,  data_type = "Input").count() >= 1 ):
+    		idle_inputs = IORegistry.objects.filter( data_id = ioregistry_output.data_id,  data_type = "Input")
+    		for idle_input in idle_inputs:
+    			p = IORegistry.objects.get(pk=idle_input.id)
+    			p.idle = True #update idle value to true
+    			p.save()
+    		IORegistry.objects.filter( pk = ioregistry_output.id).delete()
+
+    App.objects.filter(pk = app_id ).delete()
+
+    viewer = request.user
+    owner_user = request.user
+    owner_user_role = UserProfile.objects.get( user_id = owner_user.id )
+
+    if  (RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id).count() == 0 ):
+        print " No relationship found "
+        if  (RelationshipStatus.objects.all().filter (to_role_id__isnull=True ).count() >= 0 ):
+            for relationship in RelationshipStatus.objects.all().filter (to_role_id__isnull=True):
+                action.send(request.user, verb='posted', action_object = owner_user, target=relationship,  post_content="I have just deleted application <i>"+app_name+"</i>")
+    else:
+        for relationship in RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id):
+            action.send(request.user, verb='posted', action_object = owner_user, target=relationship,  post_content="I have just deleted application <i>"+app_name+"</i>") # action creation
+        if  (RelationshipStatus.objects.all().filter (to_role_id__isnull=True ).count() >= 0 ):
+            for relationship in RelationshipStatus.objects.all().filter (to_role_id__isnull=True):
+                action.send(request.user, verb='posted', action_object = owner_user, target=relationship,  post_content="I have just deleted the application <i>"+app_name+"</i>")
+
+
+    return HttpResponseRedirect('/apps/remove/') 
+
+
+
+
+
+
 
 
 def new_app2(request):
@@ -231,7 +301,8 @@ def new_app2(request):
         formset = DataApplicationFormSet(request.POST, request.FILES)
 
         if main_form.is_valid() and formset.is_valid():
-
+            owner_user = request.user
+            owner_user_role = UserProfile.objects.get( user_id = owner_user.id )
             app_name = main_form.cleaned_data['name']
             source = main_form.cleaned_data['source_code_host']
             resp = main_form.cleaned_data['responsibility']
@@ -300,6 +371,18 @@ def new_app2(request):
                     ioregistry_obj = IORegistry ( app = app_obj , data = data_obj, data_type = "Input", idle = idle)
                     print ioregistry_obj
                     ioregistry_obj.save()
+                    
+            if  (RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id).count() == 0 ):
+				print " No relationship found "
+				if  (RelationshipStatus.objects.all().filter (to_role_id__isnull=True ).count() >= 0 ):
+					for relationship in RelationshipStatus.objects.all().filter (to_role_id__isnull=True):
+						action.send(request.user, verb='posted', action_object = owner_user, target=relationship,  post_content="I have just created application <i>"+app_name+"</i>")
+            else:
+				for relationship in RelationshipStatus.objects.all().filter (to_role_id = owner_user_role.role_id):
+					action.send(request.user, verb='posted', action_object = owner_user, target=relationship,  post_content="I have just created application <i>"+app_name+"</i>") # action creation
+				if  (RelationshipStatus.objects.all().filter (to_role_id__isnull=True ).count() >= 0 ):
+					for relationship in RelationshipStatus.objects.all().filter (to_role_id__isnull=True):
+						action.send(request.user, verb='posted', action_object = owner_user, target=relationship,  post_content="I have just created application <i>"+app_name+"</i>")
 
 
             return HttpResponseRedirect('/apps/') # Redirect to a 'success' page
@@ -321,30 +404,26 @@ def new_app2(request):
     return render_to_response('app/developer/new.html', c, context_instance=RequestContext(request))
     
 def edit_specific_app(request,app_id):
-	class RequiredFormSet(BaseFormSet):
-		def __init__(self, *args, **kwargs):
-			super(RequiredFormSet, self).__init__(*args, **kwargs)
-			for form in self.forms:
-				form.empty_permitted = False				
 
-	DataApplicationFormSet = formset_factory(DataApplicationForm2, max_num=10, formset=RequiredFormSet)
+	newAdFormSet = modelformset_factory(Data,)
 
+	ioregistry_objects = IORegistry.objects.filter( app_id = app_id , idle = True)
+	data_id = set()
+	for ioregistry_object in ioregistry_objects:
+		print ioregistry_object.data_id
+		data_id.add(ioregistry_object.data_id)
 
-	print app_id
-	app = get_object_or_404(App, pk=app_id)
-	print app
+	if request.method == 'POST':
+	    formset = newAdFormSet(request.POST, request.FILES)
+	    if formset.is_valid():
+	        formset.save()
+	        return render_to_response('conf.html',
+	                                 {'state':'Your ad has been successfull created.'},
+	                                 context_instance = RequestContext(request),)
+	else:
+	    formset = newAdFormSet(queryset=Data.objects.filter(pk__in = data_id ))
 
-	form = AppForm2(instance=app)
-	app_data_formset = DataApplicationFormSet(queryset=Data.objects.all())
-
-	c = {'app_form': form,
-	'app_data_formset': app_data_formset,
-
-	}
-	c.update(csrf(request))
-
-	return render_to_response('app/developer/index.html', c, context_instance=RequestContext(request))
-
+	return render_to_response('app/developer/edit_app.html',{'formset':formset}, context_instance=RequestContext(request),)
 
 
 	 
@@ -424,3 +503,134 @@ def visualize(request):
 
 
     return render(request, 'app/visualize.html', {'apps_info' : simplejson.dumps(list(apps_info)) , 'data' : simplejson.dumps(list(data_json)) })
+
+
+def visualize_specific_app(request, app_id):
+
+    app_name = App.objects.get( id = app_id).name
+
+    '''
+    
+    if str(request.user.profile.role) == "Developer":
+       apps_info = [a.get_json() for a  in   App.objects.all() ]
+    else: 
+        user = UserProfile.objects.get( user_id = request.user.id )
+        role_ct = ContentType.objects.get(app_label="roleapp", model="role")
+        user_ct = ContentType.objects.get(app_label="auth", model="user")
+
+        # find apps by role assigment responsibility
+        try:
+            user_assigments = Assignment.objects.get(content_type_id = role_ct, object_id = user.role_id )
+            apps_info = [a.get_json() for a  in App.objects.filter(responsibility_id = user_assigments.Responsibility_id ) ]
+        except Exception, e:
+            apps_info = []
+        else:
+            pass
+
+        # find apps by user assigment responsibility
+        try:
+            user_assigments = Assignment.objects.get(content_type_id = user_ct, object_id = request.user.id )
+            print user_assigments
+            apps_info += [a.get_json() for a in App.objects.filter(responsibility_id = user_assigments.Responsibility_id ) ]
+        except Exception, e:
+            pass
+        else:
+            pass
+    '''
+    apps_info = [ a.get_json() for a in App.objects.filter(id = app_id) ]
+
+    apps_info = find_apps(apps_info , app_id )
+
+    print "Anadromi returned"
+    print apps_info
+
+    # set apps_id's to a list from json
+    apps_id = set()
+    for x in range(0, len(apps_info)):
+        apps_id.add(apps_info[x]['id'])
+
+    data_json = []
+    io_objects = IORegistry.objects.filter(app__in = apps_id ) 
+    for  io_object in io_objects:
+        print io_object.id
+
+
+        if (io_object.data_type == "Input" and io_object.idle ): #idle input case
+            data =  Data.objects.get( id = io_object.data_id )
+            app =  App.objects.get(  id = io_object.app_id )
+            data_json += { "from" : "Idle_Application_Input", "to" : app.id, "name" : data.name , "slug" : data.slug },
+
+        elif (io_object.data_type == "Input" ):
+
+            if ( Data.objects.filter( data_type = "User", id = io_object.data_id  ).count() ):
+                data =  Data.objects.get(  id = io_object.data_id )
+                app =  App.objects.get(  id = io_object.app_id )
+                data_json += { "from" : "User_Input", "to" : app.id, "name" : data.name , "slug" : data.slug },
+            elif ( Data.objects.filter( data_type = "Profile", id = io_object.data_id  ).count() ):
+                data =  Data.objects.get( id = io_object.data_id )
+                app =  App.objects.get(  id = io_object.app_id )
+                data_json += { "from" : "Profile_Input", "to" : app.id, "name" : data.name , "slug" : data.slug },
+
+            elif ( Data.objects.filter( data_type = "App", id = io_object.data_id  ).count() ):
+                if ( IORegistry.objects.filter( data_id = io_object.data_id  , data_type = "Output").count() > 0):
+                        data =  Data.objects.get( id = io_object.data_id )
+                        app =  App.objects.get(  id = io_object.app_id )
+                        outputs = IORegistry.objects.filter( data_id = io_object.data_id  , data_type = "Output") 
+
+                        for output in outputs:
+                            output_app =  App.objects.get(  id = output.app_id )
+                            data_json += { "from" : output_app.id, "to" : app.id, "name" : data.name , "slug" : data.slug },
+
+        elif (io_object.data_type == "Output" ):
+
+            if ( IORegistry.objects.filter( data_id = io_object.data_id  , data_type = "Input").count() == 0):
+                data =  Data.objects.get( id = io_object.data_id )
+                app =  App.objects.get(  id = io_object.app_id )
+                data_json += { "from" : app.id , "to" : "Idle_Application_Output", "name" : data.name , "slug" : data.slug },             
+
+
+
+
+    return render(request, 'app/visualize.html', {'apps_info' : simplejson.dumps(list(apps_info)) , 'data' : simplejson.dumps(list(data_json)) , 'name' : app_name})
+
+
+
+def find_apps(apps_info, app_id):
+
+    # for all application outputs find other applications who has these values as inputs and add them to apps_info
+    outputs = IORegistry.objects.filter( app_id = app_id , data_type = "Output")
+    for output in outputs:
+        inputs = IORegistry.objects.filter( data_id = output.data_id , data_type = "Input")
+
+        for input_ob in inputs:
+            if  not find_if_app_exist_in_json(apps_info, input_ob.app_id):
+				apps_info += [a.get_json() for a in App.objects.filter(id = input_ob.app_id) ]
+				find_apps (apps_info, input_ob.app_id )
+
+	# for all application inputs find other applications who has these values as outputs and add them to apps_info				
+    inputs = IORegistry.objects.filter( app_id = app_id , data_type = "Input")
+    for input_ob in inputs:
+        outputs = IORegistry.objects.filter( data_id = input_ob.data_id , data_type = "Output")
+
+        for output in outputs:
+            if  not find_if_app_exist_in_json(apps_info, output.app_id):
+	            apps_info += [a.get_json() for a in App.objects.filter(id = output.app_id) ]
+	            find_apps (apps_info, output.app_id )
+
+    return apps_info
+
+def find_if_app_exist_in_json(apps_info, app_id):
+
+	for x in range(0, len(apps_info)):
+		if apps_info[x]['id'] ==  app_id:
+			return True
+
+	return False
+
+
+
+
+
+
+
+

@@ -19,7 +19,7 @@ $(document).ready(function(){
 {% if status_slug == "to_accept" %}
    	{% for otheruser in relationship_list %}	
 		{% if_relationship_possible user otheruser "request_fellow" %}	
-			<li class="list-group-item" id="relationship-request"><table cellpadding="10"><tr><td><a target="_blank" href="/user/profile/{{ otheruser.username }}" rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{otheruser.profile.displayName}}"><img width="40" class="img-rounded" src="{{ otheruser.profile.thumbnailURL }}"/></a></td><td>{{ otheruser.profile.displayName }}:</td><td><a class="btn btn-success" href="{{ otheruser|add_relationship_url:"fellow" }}"><span class="glyphicon glyphicon-ok"></span>&nbsp;Αποδοχή</a> <a class="btn btn-danger" href="{{ otheruser|remove_relationship_url:"pending" }}"><span class="glyphicon glyphicon-remove"></span>&nbsp;Απόρριψη</a></td></tr></table></li>
+			<li class="list-group-item" id="relationship-request"><table cellpadding="10"><tr><td><a target="_blank" href="/user/profile/{{ otheruser.username }}" rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="{{otheruser.profile.displayName}}"><img width="40" class="img-rounded" src="{{ otheruser.profile.thumbnailURL }}"/></a></td><td>{{ otheruser.profile.displayName }}:</td><td><a class="btn btn-success" href="{{ otheruser|add_relationship_url:"fellow" }}"><span class="glyphicon glyphicon-ok"></span>&nbsp;Accept</a> <a class="btn btn-danger" href="{{ otheruser|remove_relationship_url:"pending" }}"><span class="glyphicon glyphicon-remove"></span>&nbsp;Reject</a></td></tr></table></li>
 		{% endif_relationship_possible %}
   	{% endfor %}
   {% else %}

@@ -161,13 +161,13 @@ def user_search(request):
 
 def profile_view(request, username):
 	SEX_CHOICES = (
-		('male', 'Άντρας'),
-		('female', 'Γυναίκα'),
+		('male', 'Male'),
+		('female', 'Female'),
 	)
 	ACTIVITY_CHOICES = (
-		('art', 'Τέχνη'),
-		('cooking', 'Μαγειρική'),
-		('family', 'Οικογένεια'),
+		('art', 'Art'),
+		('cooking', 'cooking'),
+		('family', 'family'),
 		('reading', 'Διάβασμα'),
 		('trips', 'Ταξίδια'),
 		('gym', 'Γυμναστήριο'),
@@ -287,6 +287,7 @@ def rendered_wall_posts( wall_posts ):
 	
 def get_actions_by_user( viewer, owner ):
 	wall_posts = []
+	wall_posts_null_relationships = []
 	wall_posts_ids = []
 		# Viewer is owner
 	if viewer == owner:
@@ -302,10 +303,12 @@ def get_actions_by_user( viewer, owner ):
 
 	else:
 		# Collect users role
+		print viewer
+		print owner
 		owner_user_role = UserProfile.objects.get( user_id = owner.id )
 		viewer_user_role = UserProfile.objects.get( user_id = viewer.id )
 		
-		for relationship_status in RelationshipStatus.objects.all().filter( Q(to_role_id = owner_user_role.role_id) & Q(from_role_id = viewer_user_role.role_id)):
+		for relationship_status in RelationshipStatus.objects.all().filter( Q(Q(to_role_id = owner_user_role.role_id) & Q(from_role_id = viewer_user_role.role_id) ) | Q( Q(to_role_id__isnull=True) & Q(from_role_id__isnull=True))):
 			if relationship_status:
 				print relationship_status.id
 				if Relationship.objects.all().filter( Q(to_user_id = owner.id) & Q(from_user_id = viewer.id) & Q(status_id = relationship_status.id) ).exists():
@@ -318,6 +321,7 @@ def get_actions_by_user( viewer, owner ):
 					print "NO RELATIONSHIP"
 			else:
 				print " NO RELATIONSHIP"
+
 				
 	return wall_posts
 	
