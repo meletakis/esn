@@ -20,12 +20,15 @@ class IfRelationshipNode(template.Node):
     def render(self, context):
         from_user = template.resolve_variable(self.from_user, context)
         to_user = template.resolve_variable(self.to_user, context)
+        self.status = template.resolve_variable(self.status, context)
 
         if from_user.is_anonymous() or to_user.is_anonymous():
             return self.nodelist_false.render(context)
 
         try:
             status = RelationshipStatus.objects.by_slug(self.status)
+            print "*******IfRelationshipNode***********"
+            print status
         except RelationshipStatus.DoesNotExist:
             raise template.TemplateSyntaxError('RelationshipStatus not found')
 
@@ -35,6 +38,9 @@ class IfRelationshipNode(template.Node):
             val = to_user.relationships.exists(from_user, status)
         else:
             val = from_user.relationships.exists(to_user, status, symmetrical=True)
+
+        print "***** IfRelationshipNode VALUE****"
+        print val
 
         if val:
             return self.nodelist_true.render(context)
@@ -49,16 +55,32 @@ class IfRelationshipPossibleNode(template.Node):
         self.status = self.status.replace('"', '')  # strip quotes
 
     def render(self, context):
+        #print context
         from_user = template.resolve_variable(self.from_user, context)
         to_user = template.resolve_variable(self.to_user, context)
+        self.status = template.resolve_variable(self.status, context)
+
+        print "***** IN RENR******"   
+        print from_user
+        print to_user
+        print "temp "
+        print self.status
 
         if from_user.is_anonymous() or to_user.is_anonymous():
             return self.nodelist_false.render(context)
+        
 
         try:
             status = RelationshipStatus.objects.by_slug(self.status)
+            print "IN IFPossible"
+            print status
         except RelationshipStatus.DoesNotExist:
+            print " IN DoesNotExist"
             raise template.TemplateSyntaxError('RelationshipStatus not found')
+        
+
+        print "TEST 1"
+        print status.from_slug
 
         if status.from_slug == self.status:
             val = from_user.relationships.canexist(to_user, status)
@@ -66,6 +88,9 @@ class IfRelationshipPossibleNode(template.Node):
             val = to_user.relationships.canexist(from_user, status)
         else:
             val = from_user.relationships.canexist(to_user, status, symmetrical=True)
+
+        print "*******VAL*********"
+        print val
 
         if val:
             return self.nodelist_true.render(context)
@@ -81,6 +106,7 @@ class HasRelationshipNode(template.Node):
 
     def render(self, context):
         user = template.resolve_variable(self.user, context)
+        self.status = template.resolve_variable(self.status, context)
 
         if user.is_anonymous():
             return self.nodelist_false.render(context)
@@ -106,6 +132,7 @@ class CanBeFollowedNode(template.Node):
 
     def render(self, context):
         user = template.resolve_variable(self.user, context)
+        self.status = template.resolve_variable(self.status, context)
 
         if user.is_anonymous():
             return self.nodelist_false.render(context)
@@ -131,6 +158,7 @@ class CanFollowNode(template.Node):
 
     def render(self, context):
         user = template.resolve_variable(self.user, context)
+        self.status = template.resolve_variable(self.status, context)
 
         if user.is_anonymous():
             return self.nodelist_false.render(context)
@@ -280,6 +308,8 @@ def if_relationship_possible(parser, token):
         {% endif_relationship %}
     """
     bits = list(token.split_contents())
+    print bits
+    
     if len(bits) != 4:
         raise TemplateSyntaxError, "%r takes 3 arguments:\n%s" % \
             (bits[0], if_relationship.__doc__)
@@ -291,6 +321,10 @@ def if_relationship_possible(parser, token):
         parser.delete_first_token()
     else:
         nodelist_false = template.NodeList()
+
+    print "------ IN if_relationship_possible-------"
+    print nodelist_false
+    print nodelist_true
     return IfRelationshipPossibleNode(nodelist_true, nodelist_false, *bits[1:])
 
 

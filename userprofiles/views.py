@@ -203,6 +203,7 @@ def profile_view(request, username):
 	form = freeCrop() # A form bound to the POST data
 
 	
+	relationship_status = RelationshipStatus.objects.all()
  
 	context = {				  'otheruser':owner_user,
 					  'username': owner_user.username,      
@@ -224,7 +225,9 @@ def profile_view(request, username):
 					  'thumbnailURL': profile.thumbnailURL,
 					  'MEDIA_URL': settings.MEDIA_URL,
 					  'user_relationships' : user_relationships,
-					  'contacts': contacts,}
+					  'contacts': contacts,
+					  'relationship_status': relationship_status,
+					  }
 	return render(request, 'userprofiles/profile.html', context)
 
 def rendered_wall_posts( wall_posts ):

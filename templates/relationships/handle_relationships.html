@@ -2,10 +2,53 @@
 {% load i18n %}
 
 <div class="btn-group">
+<ul>
 
+
+{% for relationshipstatus in relationship_status %}
+    
+
+	{% if relationshipstatus.from_role_id and relationshipstatus.to_role_id %} {# from_role and to_role exist#} 
+		
+   		{% if_relationship_possible user otheruser relationshipstatus.from_slug  %}
+			{% if_relationship user otheruser relationshipstatus.from_slug %}	
+				
+				{# they are following them, so show a "remove" url #}
+				<a class="btn btn-danger" href="{{ otheruser|remove_relationship_url:relationshipstatus.from_slug }}"><span class="glyphicon glyphicon-remove">&nbsp;</span>Unfollow {{relationshipstatus.name}} </a> 
+
+			{% else %}
+
+				{# they are not following them, so show a link to start following #}
+			    <a class="btn btn-success" href="{{ otheruser|add_relationship_url:relationshipstatus.from_slug }}"><span class="glyphicon glyphicon-plus">&nbsp;</span>Follow {{relationshipstatus.name}}</a> 
+
+			{% endif_relationship %}
+		{% endif_relationship_possible %}
+	{% endif %}
+
+   	<li>{{ relationshipstatus.name }} {{ relationshipstatus.verb }}</li>
+ {% endfor %}
+
+
+
+
+
+{% if_relationship_possible user otheruser from_tutor %}
+	{% if_relationship user otheruser from_tutor %}
+		
+	    {# they are following them, so show a "remove" url #}
+	    <a class="btn btn-danger" href="{{ otheruser|remove_relationship_url:"from_tutor" }}"><span class="glyphicon glyphicon-remove">&nbsp;</span>Unfollow tutor</a> 
+
+	  {% else %}
+	  
+	    {# they are not following them, so show a link to start following #}
+	    <a class="btn btn-success" href="{{ otheruser|add_relationship_url:"from_tutor" }}"><span class="glyphicon glyphicon-plus">&nbsp;</span>Follow tutor</a> 
+
+	  {% endif_relationship %}
+{% endif_relationship_possible %}
 
 
 <!-- Student follow Teacher (Tutor) -->
+<!--
 {% if_relationship_possible user otheruser "from_tutor" %}
 	{% if_relationship user otheruser "from_tutor" %}
 		
@@ -20,7 +63,11 @@
 	  {% endif_relationship %}
 {% endif_relationship_possible %}
 
+-->
+
 <!-- Student follow Staff (Facilitator) -->
+<!--
+
 {% if_relationship_possible user otheruser "from_facilitator" %}
 	{% if_relationship user otheruser "from_facilitator" %}
 		
@@ -35,6 +82,7 @@
 	  {% endif_relationship %}
 {% endif_relationship_possible %}
 
+-->
 
 
 <br>

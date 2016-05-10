@@ -1,0 +1,15 @@
+BeautifulSoup==3.2.1
+Django==1.5.1
+django-autocomplete-light==1.4.7
+django-endless-pagination==2.0
+django-extensions==1.2.5
+django-model-utils==1.5.0
+django-tastypie==0.10.0
+django-tastypie-extendedmodelresource==0.22
+jsonfield==0.9.20
+mimeparse==0.1.3
+MySQL-python==1.2.3
+python-dateutil==2.5.3
+simplejson==2.3.2
+six==1.10.0
+wheel==0.24.0
