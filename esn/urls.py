@@ -42,6 +42,10 @@ urlpatterns = patterns('',
      url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.STATIC_ROOT,
         }),
+
+    url(r'^fobi/', include('fobi.urls.view')),
+
+    url(r'^fobi/', include('fobi.urls.edit')),
 )
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns

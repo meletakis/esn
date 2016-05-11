@@ -88,6 +88,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     'django.core.context_processors.request',
     'django.core.context_processors.i18n',
+    "fobi.context_processors.theme",
 )
 
 AUTH_PROFILE_MODULE = 'userprofiles.UserProfile'
@@ -130,7 +131,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
      'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
      'django.contrib.admindocs',
@@ -148,6 +148,52 @@ INSTALLED_APPS = (
      'endless_pagination',
      'responsibilities',
      'jsonfield',
+
+    'fobi',
+
+    # `django-fobi` themes
+    'fobi.contrib.themes.bootstrap3', # Bootstrap 3 theme
+    'fobi.contrib.themes.foundation5', # Foundation 5 theme
+    'fobi.contrib.themes.simple', # Simple theme
+
+    'fobi.contrib.plugins.form_elements.fields.boolean',
+    'fobi.contrib.plugins.form_elements.fields.checkbox_select_multiple',
+    'fobi.contrib.plugins.form_elements.fields.date',
+    'fobi.contrib.plugins.form_elements.fields.date_drop_down',
+    'fobi.contrib.plugins.form_elements.fields.datetime',
+    'fobi.contrib.plugins.form_elements.fields.decimal',
+    'fobi.contrib.plugins.form_elements.fields.email',
+    'fobi.contrib.plugins.form_elements.fields.file',
+    'fobi.contrib.plugins.form_elements.fields.float',
+    'fobi.contrib.plugins.form_elements.fields.hidden',
+    'fobi.contrib.plugins.form_elements.fields.input',
+    'fobi.contrib.plugins.form_elements.fields.integer',
+    'fobi.contrib.plugins.form_elements.fields.ip_address',
+    'fobi.contrib.plugins.form_elements.fields.null_boolean',
+    'fobi.contrib.plugins.form_elements.fields.password',
+    'fobi.contrib.plugins.form_elements.fields.radio',
+    'fobi.contrib.plugins.form_elements.fields.regex',
+    'fobi.contrib.plugins.form_elements.fields.select',
+    'fobi.contrib.plugins.form_elements.fields.select_model_object',
+    'fobi.contrib.plugins.form_elements.fields.select_multiple',
+    'fobi.contrib.plugins.form_elements.fields.select_multiple_model_objects',
+    'fobi.contrib.plugins.form_elements.fields.slug',
+    'fobi.contrib.plugins.form_elements.fields.text',
+    'fobi.contrib.plugins.form_elements.fields.textarea',
+    'fobi.contrib.plugins.form_elements.fields.time',
+    'fobi.contrib.plugins.form_elements.fields.url',
+
+    # `django-fobi` form elements - content elements
+    'fobi.contrib.plugins.form_elements.test.dummy',
+    #'easy_thumbnails', # Required by `content_image` plugin
+    'fobi.contrib.plugins.form_elements.content.content_image',
+    'fobi.contrib.plugins.form_elements.content.content_text',
+    'fobi.contrib.plugins.form_elements.content.content_video',
+
+    # `django-fobo` form handlers
+    # 'fobi.contrib.plugins.form_handlers.db_store',
+    # 'fobi.contrib.plugins.form_handlers.http_repost',
+    # 'fobi.contrib.plugins.form_handlers.mail',
 )
 
 
